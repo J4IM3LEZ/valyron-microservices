@@ -1,4 +1,4 @@
-package com.example.Realm_of_Valyron;
+package com.realmofvalyron;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

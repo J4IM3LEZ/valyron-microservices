@@ -1,4 +1,4 @@
-package com.example.Realm_of_Valyron;
+package com.realmofvalyron;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

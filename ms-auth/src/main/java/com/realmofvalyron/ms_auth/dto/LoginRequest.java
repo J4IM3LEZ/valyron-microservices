@@ -1,4 +1,4 @@
-package com.realmofvalyron.msauth.dto;
+package com.realmofvalyron.ms_auth.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

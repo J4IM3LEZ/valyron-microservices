@@ -25,6 +25,17 @@
         </processorPath>
         <module name="Realm-of-Valyron" />
       </profile>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ms-objetos" />
+        <module name="ms-auth" />
+        <module name="ms-razas" />
+        <module name="eureka-server" />
+        <module name="ms-personajes" />
+        <module name="ms-inventario" />
+      </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
@@ -34,6 +45,8 @@
       <module name="ms-auth" options="-parameters" />
       <module name="ms-gremios" options="-parameters" />
       <module name="ms-misiones" options="-parameters" />
+      <module name="ms-inventario" options="-parameters" />
+      <module name="ms-objetos" options="-parameters" />
       <module name="ms-personajes" options="-parameters" />
       <module name="ms-poderes" options="-parameters" />
       <module name="ms-razas" options="-parameters" />

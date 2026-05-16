@@ -12,6 +12,8 @@
         <option value="$PROJECT_DIR$/ms-poderes/pom.xml" />
         <option value="$PROJECT_DIR$/ms-misiones/pom.xml" />
         <option value="$PROJECT_DIR$/ms-gremios/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-objetos/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-inventario/pom.xml" />
       </list>
     </option>
   </component>

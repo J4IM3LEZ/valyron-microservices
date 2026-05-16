@@ -1,4 +1,4 @@
-package com.realmofvalyron.msauth.dto;
+package com.realmofvalyron.ms_auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package com.realmofvalyron.msauth.security;
+package com.realmofvalyron.ms_auth.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

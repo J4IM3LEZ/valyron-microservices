@@ -1,9 +1,9 @@
-package com.realmofvalyron.msauth.controller;
+package com.realmofvalyron.ms_auth.controller;
 
-import com.realmofvalyron.msauth.dto.AuthResponse;
-import com.realmofvalyron.msauth.dto.LoginRequest;
-import com.realmofvalyron.msauth.dto.RegisterRequest;
-import com.realmofvalyron.msauth.service.AuthService;
+import com.realmofvalyron.ms_auth.dto.AuthResponse;
+import com.realmofvalyron.ms_auth.dto.LoginRequest;
+import com.realmofvalyron.ms_auth.dto.RegisterRequest;
+import com.realmofvalyron.ms_auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

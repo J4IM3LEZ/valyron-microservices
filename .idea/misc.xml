@@ -7,6 +7,11 @@
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/ms-razas/pom.xml" />
         <option value="$PROJECT_DIR$/ms-personajes/pom.xml" />
+        <option value="$PROJECT_DIR$/eureka-server/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-auth/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-poderes/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-misiones/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-gremios/pom.xml" />
       </list>
     </option>
   </component>

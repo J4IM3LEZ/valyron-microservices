@@ -3,6 +3,18 @@
   <component name="CompilerConfiguration">
     <annotationProcessing>
       <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ms-auth" />
+        <module name="ms-poderes" />
+        <module name="ms-personajes" />
+        <module name="ms-gremios" />
+        <module name="ms-misiones" />
+        <module name="ms-razas" />
+        <module name="eureka-server" />
+      </profile>
       <profile name="Annotation profile for Realm-of-Valyron" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -13,19 +25,17 @@
         </processorPath>
         <module name="Realm-of-Valyron" />
       </profile>
-      <profile name="Maven default annotation processors profile" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <module name="ms-razas" />
-        <module name="ms-personajes" />
-      </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="Realm-of-Valyron" options="-parameters" />
+      <module name="eureka-server" options="-parameters" />
+      <module name="ms-auth" options="-parameters" />
+      <module name="ms-gremios" options="-parameters" />
+      <module name="ms-misiones" options="-parameters" />
       <module name="ms-personajes" options="-parameters" />
+      <module name="ms-poderes" options="-parameters" />
       <module name="ms-razas" options="-parameters" />
     </option>
   </component>

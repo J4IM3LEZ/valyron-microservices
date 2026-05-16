@@ -1,4 +1,4 @@
-package com.realmofvalyron.ms_auth;
+package com.realmofvalyron.ms_inventario;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,10 +6,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-public class MsAuthApplication {
+public class MsInventarioApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MsAuthApplication.class, args);
+		SpringApplication.run(MsInventarioApplication.class, args);
 	}
 
 }

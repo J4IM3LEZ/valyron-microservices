@@ -1,6 +1,6 @@
-package com.realmofvalyron.msauth.repository;
+package com.realmofvalyron.ms_auth.repository;
 
-import com.realmofvalyron.msauth.entity.Usuario;
+import com.realmofvalyron.ms_auth.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,11 +1,11 @@
-package com.realmofvalyron.msauth.service;
+package com.realmofvalyron.ms_auth.service;
 
-import com.realmofvalyron.msauth.dto.AuthResponse;
-import com.realmofvalyron.msauth.dto.LoginRequest;
-import com.realmofvalyron.msauth.dto.RegisterRequest;
-import com.realmofvalyron.msauth.entity.Usuario;
-import com.realmofvalyron.msauth.repository.UsuarioRepository;
-import com.realmofvalyron.msauth.security.JwtService;
+import com.realmofvalyron.ms_auth.dto.AuthResponse;
+import com.realmofvalyron.ms_auth.dto.LoginRequest;
+import com.realmofvalyron.ms_auth.dto.RegisterRequest;
+import com.realmofvalyron.ms_auth.entity.Usuario;
+import com.realmofvalyron.ms_auth.repository.UsuarioRepository;
+import com.realmofvalyron.ms_auth.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

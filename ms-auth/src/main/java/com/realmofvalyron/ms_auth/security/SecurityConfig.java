@@ -1,4 +1,4 @@
-package com.realmofvalyron.msauth.security;
+package com.realmofvalyron.ms_auth.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.realmofvalyron.msauth.entity;
+package com.realmofvalyron.ms_auth.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

@@ -7,8 +7,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="ms-combate" />
         <module name="ms-auth" />
         <module name="ms-poderes" />
+        <module name="ms-regiones" />
         <module name="ms-personajes" />
         <module name="ms-gremios" />
         <module name="ms-misiones" />
@@ -43,13 +45,15 @@
       <module name="Realm-of-Valyron" options="-parameters" />
       <module name="eureka-server" options="-parameters" />
       <module name="ms-auth" options="-parameters" />
+      <module name="ms-combate" options="-parameters" />
       <module name="ms-gremios" options="-parameters" />
-      <module name="ms-misiones" options="-parameters" />
       <module name="ms-inventario" options="-parameters" />
+      <module name="ms-misiones" options="-parameters" />
       <module name="ms-objetos" options="-parameters" />
       <module name="ms-personajes" options="-parameters" />
       <module name="ms-poderes" options="-parameters" />
       <module name="ms-razas" options="-parameters" />
+      <module name="ms-regiones" options="-parameters" />
     </option>
   </component>
 </project>

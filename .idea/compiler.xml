@@ -11,16 +11,17 @@
         <module name="ms-poderes" />
         <module name="ms-personajes" />
         <module name="ms-gremios" />
+        <module name="ms-objetos" />
         <module name="ms-misiones" />
         <module name="ms-razas" />
         <module name="eureka-server" />
+        <module name="ms-inventario" />
       </profile>
       <profile name="Annotation profile for Realm-of-Valyron" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
         </processorPath>
         <module name="Realm-of-Valyron" />
@@ -29,12 +30,6 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="ms-objetos" />
-        <module name="ms-auth" />
-        <module name="ms-razas" />
-        <module name="eureka-server" />
-        <module name="ms-personajes" />
-        <module name="ms-inventario" />
       </profile>
     </annotationProcessing>
   </component>
@@ -44,8 +39,8 @@
       <module name="eureka-server" options="-parameters" />
       <module name="ms-auth" options="-parameters" />
       <module name="ms-gremios" options="-parameters" />
-      <module name="ms-misiones" options="-parameters" />
       <module name="ms-inventario" options="-parameters" />
+      <module name="ms-misiones" options="-parameters" />
       <module name="ms-objetos" options="-parameters" />
       <module name="ms-personajes" options="-parameters" />
       <module name="ms-poderes" options="-parameters" />

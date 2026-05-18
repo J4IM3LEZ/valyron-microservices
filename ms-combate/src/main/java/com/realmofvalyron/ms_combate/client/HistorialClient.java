@@ -1,11 +1,13 @@
 package com.realmofvalyron.ms_combate.client;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Map;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class HistorialClient {
@@ -32,7 +34,7 @@ public class HistorialClient {
                     .bodyToMono(Void.class)
                     .subscribe();
         } catch (Exception e) {
-            System.out.println("No se pudo registrar evento en historial: " + e.getMessage());
+            log.error("No se pudo registrar evento en historial: {}", e.getMessage(), e);
         }
     }
 

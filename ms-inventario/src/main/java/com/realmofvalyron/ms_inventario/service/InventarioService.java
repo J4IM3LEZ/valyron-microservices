@@ -7,11 +7,13 @@ import com.realmofvalyron.ms_inventario.dto.ObjetoDTO;
 import com.realmofvalyron.ms_inventario.entity.Inventario;
 import com.realmofvalyron.ms_inventario.repository.InventarioRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class InventarioService {
@@ -22,10 +24,12 @@ public class InventarioService {
     private static final int PESO_MAXIMO = 100;
 
     public InventarioResponse agregarObjeto(AgregarObjetoRequest request, String token) {
+        log.info("Intentando agregar objeto {} al inventario del personaje {}", request.getObjetoId(), request.getPersonajeId());
 
         // Verificar si el personaje ya tiene el objeto
         if (inventarioRepository.existsByPersonajeIdAndObjetoId(
                 request.getPersonajeId(), request.getObjetoId())) {
+            log.warn("Objeto {} ya existe en inventario del personaje {}", request.getObjetoId(), request.getPersonajeId());
             throw new RuntimeException("El personaje ya tiene este objeto en su inventario");
         }
 
@@ -33,6 +37,7 @@ public class InventarioService {
         ObjetoDTO objeto = objetoClient.obtenerObjeto(request.getObjetoId(), token);
 
         if (objeto == null) {
+            log.error("Objeto no encontrado: {}", request.getObjetoId());
             throw new RuntimeException("Objeto no encontrado con id: " + request.getObjetoId());
         }
 
@@ -45,6 +50,7 @@ public class InventarioService {
                 .sum();
 
         if (pesoActual + objeto.getPeso() > PESO_MAXIMO) {
+            log.warn("Inventario lleno para personaje {}: peso actual {}, peso objeto {}", request.getPersonajeId(), pesoActual, objeto.getPeso());
             throw new RuntimeException("El inventario está lleno. Peso máximo: "
                     + PESO_MAXIMO + ". Peso actual: " + pesoActual
                     + ". Peso del objeto: " + objeto.getPeso());
@@ -61,6 +67,7 @@ public class InventarioService {
                 .build();
 
         inventarioRepository.save(inventario);
+        log.info("Objeto {} agregado exitosamente al inventario del personaje {}", objeto.getNombre(), request.getPersonajeId());
         return mapToResponse(inventario);
     }
 

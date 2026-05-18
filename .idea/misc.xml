@@ -16,6 +16,7 @@
         <option value="$PROJECT_DIR$/ms-inventario/pom.xml" />
         <option value="$PROJECT_DIR$/ms-regiones/pom.xml" />
         <option value="$PROJECT_DIR$/ms-combate/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-historial/pom.xml" />
       </list>
     </option>
   </component>

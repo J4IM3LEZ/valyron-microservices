@@ -14,6 +14,7 @@
         <module name="ms-personajes" />
         <module name="ms-gremios" />
         <module name="ms-objetos" />
+        <module name="ms-historial" />
         <module name="ms-misiones" />
         <module name="ms-razas" />
         <module name="eureka-server" />
@@ -42,6 +43,7 @@
       <module name="ms-auth" options="-parameters" />
       <module name="ms-combate" options="-parameters" />
       <module name="ms-gremios" options="-parameters" />
+      <module name="ms-historial" options="-parameters" />
       <module name="ms-inventario" options="-parameters" />
       <module name="ms-misiones" options="-parameters" />
       <module name="ms-objetos" options="-parameters" />

@@ -12,12 +12,14 @@ import com.realmofvalyron.ms_combate.dto.PoderDTO;
 import com.realmofvalyron.ms_combate.entity.Batalla;
 import com.realmofvalyron.ms_combate.repository.BatallaRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CombateService {
@@ -31,11 +33,16 @@ public class CombateService {
 
     public BatallaResponse iniciarBatalla(IniciarBatallaRequest request, String token) {
 
+        log.info("Iniciando batalla para personaje {} contra {} tipo {}",
+                request.getPersonajeId(), request.getNombreEnemigo(), request.getTipoEnemigo());
+
         // 1. Obtener stats del personaje desde ms-personajes
         PersonajeDTO personaje = personajeClient.obtenerPersonaje(request.getPersonajeId(), token);
         if (personaje == null) {
+            log.error("Personaje no encontrado: {}", request.getPersonajeId());
             throw new RuntimeException("Personaje no encontrado con id: " + request.getPersonajeId());
         }
+        log.debug("Personaje cargado: {} nivel {}", personaje.getNombre(), personaje.getNivel());
 
         // 2. Obtener arma equipada desde ms-inventario
         int bonusArma = 0;
@@ -52,9 +59,12 @@ public class CombateService {
 
                 if (arma != null) {
                     bonusArma = 10;
+                    log.debug("Arma equipada encontrada: {}", arma.getNombreObjeto());
                 }
             }
         } catch (Exception e) {
+            log.warn("Error al obtener inventario para personaje {}: {}",
+                    request.getPersonajeId(), e.getMessage());
             bonusArma = 0;
         }
 
@@ -68,6 +78,7 @@ public class CombateService {
             if (poder != null) {
                 if (personaje.getNivel() >= poder.getNivelRequerido()) {
                     bonusPoder = poder.getDanio();
+                    log.debug("Poder usado: {} con daño {}", poder.getNombre(), poder.getDanio());
                 } else {
                     throw new RuntimeException("El personaje necesita nivel " +
                             poder.getNivelRequerido() +
@@ -76,6 +87,7 @@ public class CombateService {
                 }
             } else {
                 bonusPoder = 15;
+                log.warn("Poder {} no encontrado en ms-poderes, usando bono básico", nombrePoderUsado);
             }
         }
 
@@ -119,6 +131,9 @@ public class CombateService {
                 .build();
 
         batallaRepository.save(batalla);
+        log.info("Batalla registrada - Personaje: {} vs {} - Resultado: {} - XP ganada: {}",
+                batalla.getNombrePersonaje(), batalla.getNombreEnemigo(),
+                batalla.getResultado(), batalla.getXpGanada());
 
         // 8. Notificar a ms-historial
         historialClient.registrarEvento(
@@ -137,6 +152,7 @@ public class CombateService {
     }
 
     public List<BatallaResponse> historialPorPersonaje(Long personajeId) {
+        log.info("Obteniendo historial de batallas para personaje {}", personajeId);
         return batallaRepository
                 .findByPersonajeIdOrderByFechaBatallaDesc(personajeId)
                 .stream()
@@ -145,6 +161,7 @@ public class CombateService {
     }
 
     public List<BatallaResponse> victoriasPorPersonaje(Long personajeId) {
+        log.info("Obteniendo victorias para personaje {}", personajeId);
         return batallaRepository
                 .findByPersonajeIdAndResultado(personajeId, Batalla.ResultadoBatalla.VICTORIA)
                 .stream()

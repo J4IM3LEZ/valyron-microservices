@@ -1,5 +1,6 @@
 package com.realmofvalyron.ms_misiones.service;
 
+import com.realmofvalyron.ms_misiones.client.HistorialClient;
 import com.realmofvalyron.ms_misiones.dto.MisionRequest;
 import com.realmofvalyron.ms_misiones.dto.MisionResponse;
 import com.realmofvalyron.ms_misiones.entity.Mision;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 public class MisionService {
 
     private final MisionRepository misionRepository;
+    private final HistorialClient historialClient;
 
     public MisionResponse crearMision(MisionRequest request) {
 
@@ -33,7 +35,6 @@ public class MisionService {
                 .build();
 
         misionRepository.save(mision);
-
         return mapToResponse(mision);
     }
 
@@ -64,7 +65,7 @@ public class MisionService {
                 .collect(Collectors.toList());
     }
 
-    public MisionResponse completarMision(Long id) {
+    public MisionResponse completarMision(Long id, Long personajeId, String nombrePersonaje) {
         Mision mision = misionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Mision no encontrada con id: " + id));
 
@@ -74,6 +75,17 @@ public class MisionService {
 
         mision.setEstadoMision(Mision.EstadoMision.COMPLETADA);
         misionRepository.save(mision);
+
+        // Notificar a ms-historial
+        historialClient.registrarEvento(
+                personajeId,
+                nombrePersonaje,
+                nombrePersonaje + " completó la misión: " + mision.getNombre(),
+                mision.getId(),
+                "XP ganada: " + mision.getRecompensaXp() +
+                        ", Oro ganado: " + mision.getRecompensaOro() +
+                        ", Dificultad: " + mision.getDificultad().name()
+        );
 
         return mapToResponse(mision);
     }

@@ -1,5 +1,6 @@
 package com.realmofvalyron.ms_combate.service;
 
+import com.realmofvalyron.ms_combate.client.HistorialClient;
 import com.realmofvalyron.ms_combate.client.InventarioClient;
 import com.realmofvalyron.ms_combate.client.PersonajeClient;
 import com.realmofvalyron.ms_combate.client.PoderClient;
@@ -25,6 +26,7 @@ public class CombateService {
     private final PersonajeClient personajeClient;
     private final PoderClient poderClient;
     private final InventarioClient inventarioClient;
+    private final HistorialClient historialClient;
     private final Random random = new Random();
 
     public BatallaResponse iniciarBatalla(IniciarBatallaRequest request, String token) {
@@ -37,7 +39,6 @@ public class CombateService {
 
         // 2. Obtener arma equipada desde ms-inventario
         int bonusArma = 0;
-        String armaEquipada = "Sin arma";
         try {
             List<ItemInventarioDTO> inventario = inventarioClient
                     .obtenerInventario(request.getPersonajeId(), token);
@@ -50,8 +51,6 @@ public class CombateService {
                         .orElse(null);
 
                 if (arma != null) {
-                    armaEquipada = arma.getNombreObjeto();
-                    // Bono de arma basado en rareza del objeto
                     bonusArma = 10;
                 }
             }
@@ -81,7 +80,6 @@ public class CombateService {
         }
 
         // 4. Calcular daño total
-        // fuerza + bono arma + bono poder + aleatorio
         int danioInfligido = personaje.getFuerza() + bonusArma + bonusPoder + random.nextInt(10);
 
         // 5. Calcular daño del enemigo
@@ -121,6 +119,20 @@ public class CombateService {
                 .build();
 
         batallaRepository.save(batalla);
+
+        // 8. Notificar a ms-historial
+        historialClient.registrarEvento(
+                batalla.getPersonajeId(),
+                batalla.getNombrePersonaje(),
+                batalla.getNombrePersonaje() + " " +
+                        (resultado == Batalla.ResultadoBatalla.VICTORIA ? "venció a " : "fue derrotado por ") +
+                        batalla.getNombreEnemigo(),
+                batalla.getId(),
+                "Daño infligido: " + danioInfligido +
+                        ", Daño recibido: " + danioEnemigo +
+                        ", XP ganada: " + xpGanada
+        );
+
         return mapToResponse(batalla);
     }
 

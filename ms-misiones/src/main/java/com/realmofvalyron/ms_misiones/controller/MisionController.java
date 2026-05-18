@@ -43,8 +43,11 @@ public class MisionController {
     }
 
     @PutMapping("/{id}/completar")
-    public ResponseEntity<MisionResponse> completarMision(@PathVariable Long id) {
-        return ResponseEntity.ok(misionService.completarMision(id));
+    public ResponseEntity<MisionResponse> completarMision(
+            @PathVariable Long id,
+            @RequestParam Long personajeId,
+            @RequestParam String nombrePersonaje) {
+        return ResponseEntity.ok(misionService.completarMision(id, personajeId, nombrePersonaje));
     }
 
     @DeleteMapping("/{id}")

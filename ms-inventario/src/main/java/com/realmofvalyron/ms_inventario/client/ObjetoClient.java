@@ -15,7 +15,7 @@ public class ObjetoClient {
         return webClientBuilder
                 .build()
                 .get()
-                .uri("http://ms-objetos/objetos/{id}", objetoId)
+                .uri("http://ms-objetos/api/v1/objetos/{id}", objetoId)
                 .header("Authorization", "Bearer " + token)
                 .retrieve()
                 .bodyToMono(ObjetoDTO.class)

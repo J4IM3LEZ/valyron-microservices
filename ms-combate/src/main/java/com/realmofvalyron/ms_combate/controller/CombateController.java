@@ -12,36 +12,33 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/combate")
+@RequestMapping("/api/v1/combates")
 @RequiredArgsConstructor
 public class CombateController {
 
     private final CombateService combateService;
 
-    @PostMapping("/iniciar")
+    @PostMapping
     public ResponseEntity<BatallaResponse> iniciarBatalla(
             @Valid @RequestBody IniciarBatallaRequest request,
             @RequestHeader("Authorization") String authHeader) {
         String token = authHeader.substring(7);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(combateService.iniciarBatalla(request, token));
+        BatallaResponse created = combateService.iniciarBatalla(request, token);
+        return ResponseEntity.created(java.net.URI.create("/api/v1/combates/" + created.getId())).body(created);
     }
 
-    @GetMapping("/historial/{personajeId}")
-    public ResponseEntity<List<BatallaResponse>> historial(
-            @PathVariable Long personajeId) {
+    @GetMapping
+    public ResponseEntity<List<BatallaResponse>> historial(@RequestParam("personajeId") Long personajeId) {
         return ResponseEntity.ok(combateService.historialPorPersonaje(personajeId));
     }
 
-    @GetMapping("/victorias/{personajeId}")
-    public ResponseEntity<List<BatallaResponse>> victorias(
-            @PathVariable Long personajeId) {
+    @GetMapping("/victorias")
+    public ResponseEntity<List<BatallaResponse>> victorias(@RequestParam("personajeId") Long personajeId) {
         return ResponseEntity.ok(combateService.victoriasPorPersonaje(personajeId));
     }
 
-    @GetMapping("/victorias/{personajeId}/total")
-    public ResponseEntity<Integer> totalVictorias(
-            @PathVariable Long personajeId) {
+    @GetMapping("/victorias/total")
+    public ResponseEntity<Integer> totalVictorias(@RequestParam("personajeId") Long personajeId) {
         return ResponseEntity.ok(combateService.contarVictorias(personajeId));
     }
 

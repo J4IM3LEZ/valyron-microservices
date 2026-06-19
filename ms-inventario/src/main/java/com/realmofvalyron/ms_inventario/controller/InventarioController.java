@@ -12,24 +12,24 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/inventario")
+@RequestMapping("/api/v1/inventarios")
 @RequiredArgsConstructor
 public class InventarioController {
 
     private final InventarioService inventarioService;
 
-    @PostMapping("/agregar")
+    @PostMapping
     public ResponseEntity<InventarioResponse> agregarObjeto(
             @Valid @RequestBody AgregarObjetoRequest request,
             @RequestHeader("Authorization") String authHeader) {
         String token = authHeader.substring(7);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(inventarioService.agregarObjeto(request, token));
+        InventarioResponse created = inventarioService.agregarObjeto(request, token);
+        return ResponseEntity.created(java.net.URI.create("/api/v1/inventarios/" + created.getId())).body(created);
     }
 
-    @GetMapping("/personaje/{personajeId}")
-    public ResponseEntity<List<InventarioResponse>> listarInventario(
-            @PathVariable Long personajeId) {
+    @GetMapping
+    public ResponseEntity<List<InventarioResponse>> listarInventario(@RequestParam("personajeId") Long personajeId,
+                                                                      @RequestHeader(value = "Authorization", required = false) String authHeader) {
         return ResponseEntity.ok(inventarioService.listarInventario(personajeId));
     }
 
@@ -47,7 +47,7 @@ public class InventarioController {
         return ResponseEntity.ok(inventarioService.desequiparObjeto(personajeId, objetoId));
     }
 
-    @DeleteMapping("/eliminar/{personajeId}/{objetoId}")
+    @DeleteMapping("/{personajeId}/{objetoId}")
     public ResponseEntity<Void> eliminarObjeto(
             @PathVariable Long personajeId,
             @PathVariable Long objetoId) {

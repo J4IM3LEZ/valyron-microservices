@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/poderes")
+@RequestMapping("/api/v1/poderes")
 @RequiredArgsConstructor
 public class PoderController {
 
@@ -19,11 +19,20 @@ public class PoderController {
 
     @PostMapping
     public ResponseEntity<PoderResponse> crearPoder(@Valid @RequestBody PoderRequest request) {
-        return ResponseEntity.ok(poderService.crearPoder(request));
+        PoderResponse created = poderService.crearPoder(request);
+        return ResponseEntity.created(java.net.URI.create("/api/v1/poderes/" + created.getId())).body(created);
     }
 
     @GetMapping
-    public ResponseEntity<List<PoderResponse>> listarPoderes() {
+    public ResponseEntity<List<PoderResponse>> listarPoderes(
+            @RequestParam(value = "raza", required = false) String raza,
+            @RequestParam(value = "nivel", required = false) Integer nivel) {
+        if (raza != null && !raza.isBlank()) {
+            return ResponseEntity.ok(poderService.obtenerPoderesPorRaza(raza));
+        }
+        if (nivel != null) {
+            return ResponseEntity.ok(poderService.obtenerPoderesPorNivel(nivel));
+        }
         return ResponseEntity.ok(poderService.listarPoderes());
     }
 
@@ -32,14 +41,9 @@ public class PoderController {
         return ResponseEntity.ok(poderService.obtenerPoderPorId(id));
     }
 
-    @GetMapping("/raza/{tipoRaza}")
-    public ResponseEntity<List<PoderResponse>> obtenerPoderesPorRaza(@PathVariable String tipoRaza) {
-        return ResponseEntity.ok(poderService.obtenerPoderesPorRaza(tipoRaza));
-    }
-
-    @GetMapping("/nivel/{nivel}")
-    public ResponseEntity<List<PoderResponse>> obtenerPoderesPorNivel(@PathVariable Integer nivel) {
-        return ResponseEntity.ok(poderService.obtenerPoderesPorNivel(nivel));
+    @PutMapping("/{id}")
+    public ResponseEntity<PoderResponse> actualizarPoder(@PathVariable Long id, @Valid @RequestBody PoderRequest request) {
+        return ResponseEntity.ok(poderService.actualizarPoder(id, request));
     }
 
     @DeleteMapping("/{id}")

@@ -19,7 +19,7 @@ public class GremioService {
     public GremioResponse crearGremio(GremioRequest request) {
 
         if (gremioRepository.existsByNombre(request.getNombre())) {
-            throw new RuntimeException("Ya existe un gremio con ese nombre");
+                    throw new com.realmofvalyron.ms_gremios.exception.BadRequestException("Ya existe un gremio con ese nombre");
         }
 
         Gremio gremio = Gremio.builder()
@@ -51,7 +51,7 @@ public class GremioService {
 
     public GremioResponse agregarTesoro(Long id, Integer oro) {
         Gremio gremio = gremioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Gremio no encontrado con id: " + id));
+                        .orElseThrow(() -> new com.realmofvalyron.ms_gremios.exception.ResourceNotFoundException("Gremio no encontrado con id: " + id));
         gremio.setTesoroOro(gremio.getTesoroOro() + oro);
         gremioRepository.save(gremio);
         return mapToResponse(gremio);
@@ -59,10 +59,10 @@ public class GremioService {
 
     public GremioResponse disolverGremio(Long id) {
         Gremio gremio = gremioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Gremio no encontrado con id: " + id));
+                        .orElseThrow(() -> new com.realmofvalyron.ms_gremios.exception.ResourceNotFoundException("Gremio no encontrado con id: " + id));
 
         if (gremio.getEstadoGremio() == Gremio.EstadoGremio.DISUELTO) {
-            throw new RuntimeException("El gremio ya fue disuelto");
+                    throw new com.realmofvalyron.ms_gremios.exception.BadRequestException("El gremio ya fue disuelto");
         }
 
         gremio.setEstadoGremio(Gremio.EstadoGremio.DISUELTO);
@@ -70,14 +70,25 @@ public class GremioService {
         return mapToResponse(gremio);
     }
 
-    public void eliminarGremio(Long id) {
-        if (!gremioRepository.existsById(id)) {
-            throw new RuntimeException("Gremio no encontrado con id: " + id);
-        }
-        gremioRepository.deleteById(id);
-    }
+    public GremioResponse actualizarGremio(Long id, GremioRequest request) {
+            Gremio gremio = gremioRepository.findById(id)
+                    .orElseThrow(() -> new com.realmofvalyron.ms_gremios.exception.ResourceNotFoundException("Gremio no encontrado con id: " + id));
 
-    private GremioResponse mapToResponse(Gremio gremio) {
+            gremio.setNombre(request.getNombre());
+            gremio.setDescripcion(request.getDescripcion());
+            gremio.setGuardianId(request.getGuardianId());
+            gremioRepository.save(gremio);
+            return mapToResponse(gremio);
+        }
+
+        public void eliminarGremio(Long id) {
+            if (!gremioRepository.existsById(id)) {
+                throw new com.realmofvalyron.ms_gremios.exception.ResourceNotFoundException("Gremio no encontrado con id: " + id);
+            }
+            gremioRepository.deleteById(id);
+        }
+
+        private GremioResponse mapToResponse(Gremio gremio) {
         return GremioResponse.builder()
                 .id(gremio.getId())
                 .nombre(gremio.getNombre())

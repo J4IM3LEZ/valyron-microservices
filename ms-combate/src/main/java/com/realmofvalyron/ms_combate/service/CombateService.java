@@ -40,7 +40,7 @@ public class CombateService {
         PersonajeDTO personaje = personajeClient.obtenerPersonaje(request.getPersonajeId(), token);
         if (personaje == null) {
             log.error("Personaje no encontrado: {}", request.getPersonajeId());
-            throw new RuntimeException("Personaje no encontrado con id: " + request.getPersonajeId());
+            throw new com.realmofvalyron.ms_combate.exception.ResourceNotFoundException("Personaje no encontrado con id: " + request.getPersonajeId());
         }
         log.debug("Personaje cargado: {} nivel {}", personaje.getNombre(), personaje.getNivel());
 
@@ -80,7 +80,7 @@ public class CombateService {
                     bonusPoder = poder.getDanio();
                     log.debug("Poder usado: {} con daño {}", poder.getNombre(), poder.getDanio());
                 } else {
-                    throw new RuntimeException("El personaje necesita nivel " +
+                    throw new com.realmofvalyron.ms_combate.exception.BadRequestException("El personaje necesita nivel " +
                             poder.getNivelRequerido() +
                             " para usar el poder " + poder.getNombre() +
                             ". Nivel actual: " + personaje.getNivel());

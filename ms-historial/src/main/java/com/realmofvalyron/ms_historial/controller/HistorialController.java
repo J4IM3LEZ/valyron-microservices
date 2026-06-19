@@ -12,30 +12,28 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/historial")
+@RequestMapping("/api/v1/eventos")
 @RequiredArgsConstructor
 public class HistorialController {
 
     private final HistorialService historialService;
 
-    @PostMapping("/evento")
-    public ResponseEntity<EventoResponse> registrarEvento(
-            @Valid @RequestBody EventoRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(historialService.registrarEvento(request));
+    @PostMapping
+    public ResponseEntity<EventoResponse> registrarEvento(@Valid @RequestBody EventoRequest request) {
+        EventoResponse created = historialService.registrarEvento(request);
+        return ResponseEntity.created(java.net.URI.create("/api/v1/eventos/" + created.getId())).body(created);
     }
 
-    @GetMapping("/personaje/{personajeId}")
-    public ResponseEntity<List<EventoResponse>> historialPorPersonaje(
-            @PathVariable Long personajeId) {
-        return ResponseEntity.ok(historialService.historialPorPersonaje(personajeId));
-    }
-
-    @GetMapping("/personaje/{personajeId}/tipo/{tipo}")
-    public ResponseEntity<List<EventoResponse>> eventosPorTipo(
-            @PathVariable Long personajeId,
-            @PathVariable String tipo) {
-        return ResponseEntity.ok(historialService.eventosPorTipo(personajeId, tipo));
+    @GetMapping
+    public ResponseEntity<List<EventoResponse>> listarEventos(@RequestParam(value = "personajeId", required = false) Long personajeId,
+                                                               @RequestParam(value = "tipo", required = false) String tipo) {
+        if (personajeId != null && tipo != null && !tipo.isBlank()) {
+            return ResponseEntity.ok(historialService.eventosPorTipo(personajeId, tipo));
+        }
+        if (personajeId != null) {
+            return ResponseEntity.ok(historialService.historialPorPersonaje(personajeId));
+        }
+        return ResponseEntity.ok(historialService.todosLosBatallas());
     }
 
     @GetMapping("/batallas")
@@ -43,10 +41,9 @@ public class HistorialController {
         return ResponseEntity.ok(historialService.todosLosBatallas());
     }
 
-    @GetMapping("/personaje/{personajeId}/tipo/{tipo}/total")
-    public ResponseEntity<Integer> contarEventos(
-            @PathVariable Long personajeId,
-            @PathVariable String tipo) {
+    @GetMapping("/total")
+    public ResponseEntity<Integer> contarEventos(@RequestParam("personajeId") Long personajeId,
+                                                  @RequestParam("tipo") String tipo) {
         return ResponseEntity.ok(historialService.contarEventosPorTipo(personajeId, tipo));
     }
 

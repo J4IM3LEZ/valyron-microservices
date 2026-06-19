@@ -18,7 +18,7 @@ public class PoderClient {
             List<PoderDTO> poderes = webClientBuilder
                     .build()
                     .get()
-                    .uri("http://localhost:8085/poderes")
+                    .uri("http://localhost:8085/api/v1/poderes")
                     .header("Authorization", "Bearer " + token)
                     .retrieve()
                     .bodyToFlux(PoderDTO.class)

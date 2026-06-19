@@ -18,7 +18,7 @@ public class ObjetoService {
 
     public ObjetoResponse crear(ObjetoRequest request) {
         if (objetoRepository.existsByNombre(request.getNombre())) {
-            throw new RuntimeException("Ya existe un objeto con ese nombre");
+                    throw new com.realmofvalyron.ms_objetos.exception.BadRequestException("Ya existe un objeto con ese nombre");
         }
 
         Objeto objeto = Objeto.builder()
@@ -50,7 +50,7 @@ public class ObjetoService {
 
     public ObjetoResponse buscarPorId(Long id) {
         Objeto objeto = objetoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Objeto no encontrado con id: " + id));
+                    .orElseThrow(() -> new com.realmofvalyron.ms_objetos.exception.ResourceNotFoundException("Objeto no encontrado con id: " + id));
         return mapToResponse(objeto);
     }
 
@@ -70,7 +70,7 @@ public class ObjetoService {
 
     public ObjetoResponse actualizar(Long id, ObjetoRequest request) {
         Objeto objeto = objetoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Objeto no encontrado con id: " + id));
+                    .orElseThrow(() -> new com.realmofvalyron.ms_objetos.exception.ResourceNotFoundException("Objeto no encontrado con id: " + id));
 
         objeto.setNombre(request.getNombre());
         objeto.setTipo(Objeto.TipoObjeto.valueOf(request.getTipo()));
@@ -92,7 +92,7 @@ public class ObjetoService {
 
     public void eliminar(Long id) {
         if (!objetoRepository.existsById(id)) {
-            throw new RuntimeException("Objeto no encontrado con id: " + id);
+                    throw new com.realmofvalyron.ms_objetos.exception.ResourceNotFoundException("Objeto no encontrado con id: " + id);
         }
         objetoRepository.deleteById(id);
     }

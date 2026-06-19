@@ -24,9 +24,18 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/regiones").hasRole("MAESTRO_DEL_REINO")
-                        .requestMatchers(HttpMethod.PUT, "/regiones/**").hasRole("MAESTRO_DEL_REINO")
-                        .requestMatchers(HttpMethod.DELETE, "/regiones/**").hasRole("MAESTRO_DEL_REINO")
+                        // Allow Swagger/OpenAPI UI and docs
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "/swagger-resources/**",
+                                "/webjars/**"
+                        ).permitAll()
+                        // Resource access rules
+                        .requestMatchers(HttpMethod.POST, "/api/v1/regiones").hasRole("MAESTRO_DEL_REINO")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/regiones/**").hasRole("MAESTRO_DEL_REINO")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/regiones/**").hasRole("MAESTRO_DEL_REINO")
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

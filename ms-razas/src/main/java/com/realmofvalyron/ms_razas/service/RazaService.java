@@ -19,7 +19,7 @@ public class RazaService {
     public RazaResponse crearRaza(RazaRequest request) {
 
         if (razaRepository.existsByNombre(request.getNombre())) {
-            throw new RuntimeException("Ya existe una raza con ese nombre");
+                throw new com.realmofvalyron.ms_razas.exception.BadRequestException("Ya existe una raza con ese nombre");
         }
 
         Raza raza = Raza.builder()
@@ -47,22 +47,40 @@ public class RazaService {
 
     public RazaResponse obtenerRazaPorId(Long id) {
         Raza raza = razaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Raza no encontrada con id: " + id));
+                    .orElseThrow(() -> new com.realmofvalyron.ms_razas.exception.ResourceNotFoundException("Raza no encontrada con id: " + id));
         return mapToResponse(raza);
     }
 
     public RazaResponse obtenerRazaPorNombre(String nombre) {
         Raza raza = razaRepository.findByNombre(nombre)
-                .orElseThrow(() -> new RuntimeException("Raza no encontrada con nombre: " + nombre));
+                    .orElseThrow(() -> new com.realmofvalyron.ms_razas.exception.ResourceNotFoundException("Raza no encontrada con nombre: " + nombre));
         return mapToResponse(raza);
     }
 
     public void eliminarRaza(Long id) {
         if (!razaRepository.existsById(id)) {
-            throw new RuntimeException("Raza no encontrada con id: " + id);
+                throw new com.realmofvalyron.ms_razas.exception.ResourceNotFoundException("Raza no encontrada con id: " + id);
         }
         razaRepository.deleteById(id);
     }
+
+        public RazaResponse actualizarRaza(Long id, RazaRequest request) {
+            Raza raza = razaRepository.findById(id)
+                    .orElseThrow(() -> new com.realmofvalyron.ms_razas.exception.ResourceNotFoundException("Raza no encontrada con id: " + id));
+
+            raza.setNombre(request.getNombre());
+            raza.setDescripcion(request.getDescripcion());
+            raza.setBonusFuerza(request.getBonusFuerza());
+            raza.setBonusDestreza(request.getBonusDestreza());
+            raza.setBonusSabiduria(request.getBonusSabiduria());
+            raza.setBonusVitalidad(request.getBonusVitalidad());
+            raza.setHabilidadInnata(request.getHabilidadInnata());
+            raza.setRestricciones(request.getRestricciones());
+
+            razaRepository.save(raza);
+
+            return mapToResponse(raza);
+        }
 
     private RazaResponse mapToResponse(Raza raza) {
         return RazaResponse.builder()

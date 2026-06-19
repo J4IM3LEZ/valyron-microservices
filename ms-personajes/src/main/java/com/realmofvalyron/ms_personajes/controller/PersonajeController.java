@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/personajes")
+@RequestMapping("/api/v1/personajes")
 @RequiredArgsConstructor
 public class PersonajeController {
 
@@ -19,17 +19,27 @@ public class PersonajeController {
 
     @PostMapping
     public ResponseEntity<PersonajeResponse> crearPersonaje(@Valid @RequestBody PersonajeRequest request) {
-        return ResponseEntity.ok(personajeService.crearPersonaje(request));
+        PersonajeResponse created = personajeService.crearPersonaje(request);
+        return ResponseEntity.created(java.net.URI.create("/api/v1/personajes/" + created.getId())).body(created);
     }
 
     @GetMapping
-    public ResponseEntity<List<PersonajeResponse>> listarPersonajes() {
+    public ResponseEntity<List<PersonajeResponse>> listarPersonajes(@RequestParam(value = "nombre", required = false) String nombre) {
+        if (nombre != null && !nombre.isBlank()) {
+            // assuming service will throw if not found
+            return ResponseEntity.ok(java.util.List.of(personajeService.obtenerPersonajePorNombre(nombre)));
+        }
         return ResponseEntity.ok(personajeService.listarPersonajes());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PersonajeResponse> obtenerPersonajePorId(@PathVariable Long id) {
         return ResponseEntity.ok(personajeService.obtenerPersonajePorId(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PersonajeResponse> actualizarPersonaje(@PathVariable Long id, @Valid @RequestBody PersonajeRequest request) {
+        return ResponseEntity.ok(personajeService.actualizarPersonaje(id, request));
     }
 
     @DeleteMapping("/{id}")

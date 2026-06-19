@@ -30,7 +30,7 @@ public class InventarioService {
         if (inventarioRepository.existsByPersonajeIdAndObjetoId(
                 request.getPersonajeId(), request.getObjetoId())) {
             log.warn("Objeto {} ya existe en inventario del personaje {}", request.getObjetoId(), request.getPersonajeId());
-            throw new RuntimeException("El personaje ya tiene este objeto en su inventario");
+                    throw new com.realmofvalyron.ms_inventario.exception.BadRequestException("El personaje ya tiene este objeto en su inventario");
         }
 
         // Llamar a ms-objetos para obtener los datos del objeto
@@ -38,7 +38,7 @@ public class InventarioService {
 
         if (objeto == null) {
             log.error("Objeto no encontrado: {}", request.getObjetoId());
-            throw new RuntimeException("Objeto no encontrado con id: " + request.getObjetoId());
+                    throw new com.realmofvalyron.ms_inventario.exception.ResourceNotFoundException("Objeto no encontrado con id: " + request.getObjetoId());
         }
 
         // Verificar peso máximo del inventario
@@ -51,7 +51,7 @@ public class InventarioService {
 
         if (pesoActual + objeto.getPeso() > PESO_MAXIMO) {
             log.warn("Inventario lleno para personaje {}: peso actual {}, peso objeto {}", request.getPersonajeId(), pesoActual, objeto.getPeso());
-            throw new RuntimeException("El inventario está lleno. Peso máximo: "
+                    throw new com.realmofvalyron.ms_inventario.exception.BadRequestException("El inventario está lleno. Peso máximo: "
                     + PESO_MAXIMO + ". Peso actual: " + pesoActual
                     + ". Peso del objeto: " + objeto.getPeso());
         }
@@ -81,7 +81,7 @@ public class InventarioService {
     public InventarioResponse equiparObjeto(Long personajeId, Long objetoId) {
         Inventario inventario = inventarioRepository
                 .findByPersonajeIdAndObjetoId(personajeId, objetoId)
-                .orElseThrow(() -> new RuntimeException("Objeto no encontrado en el inventario"));
+                        .orElseThrow(() -> new com.realmofvalyron.ms_inventario.exception.ResourceNotFoundException("Objeto no encontrado en el inventario"));
 
         inventario.setEquipado(true);
         inventarioRepository.save(inventario);
@@ -91,7 +91,7 @@ public class InventarioService {
     public InventarioResponse desequiparObjeto(Long personajeId, Long objetoId) {
         Inventario inventario = inventarioRepository
                 .findByPersonajeIdAndObjetoId(personajeId, objetoId)
-                .orElseThrow(() -> new RuntimeException("Objeto no encontrado en el inventario"));
+                        .orElseThrow(() -> new com.realmofvalyron.ms_inventario.exception.ResourceNotFoundException("Objeto no encontrado en el inventario"));
 
         inventario.setEquipado(false);
         inventarioRepository.save(inventario);
@@ -101,7 +101,7 @@ public class InventarioService {
     public void eliminarObjeto(Long personajeId, Long objetoId) {
         Inventario inventario = inventarioRepository
                 .findByPersonajeIdAndObjetoId(personajeId, objetoId)
-                .orElseThrow(() -> new RuntimeException("Objeto no encontrado en el inventario"));
+                        .orElseThrow(() -> new com.realmofvalyron.ms_inventario.exception.ResourceNotFoundException("Objeto no encontrado en el inventario"));
 
         inventarioRepository.delete(inventario);
     }

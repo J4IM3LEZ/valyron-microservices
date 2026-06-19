@@ -18,7 +18,7 @@ public class InventarioClient {
             return webClientBuilder
                     .build()
                     .get()
-                    .uri("http://localhost:8084/inventario/personaje/{id}", personajeId)
+                    .uri("http://localhost:8084/api/v1/inventarios?personajeId={id}", personajeId)
                     .header("Authorization", "Bearer " + token)
                     .retrieve()
                     .bodyToFlux(ItemInventarioDTO.class)

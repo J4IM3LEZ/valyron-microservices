@@ -19,7 +19,7 @@ public class PoderService {
     public PoderResponse crearPoder(PoderRequest request) {
 
         if (poderRepository.existsByNombre(request.getNombre())) {
-            throw new RuntimeException("Ya existe un poder con ese nombre");
+                    throw new com.realmofvalyron.ms_poderes.exception.BadRequestException("Ya existe un poder con ese nombre");
         }
 
         Poder poder = Poder.builder()
@@ -46,7 +46,7 @@ public class PoderService {
 
     public PoderResponse obtenerPoderPorId(Long id) {
         Poder poder = poderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Poder no encontrado con id: " + id));
+                        .orElseThrow(() -> new com.realmofvalyron.ms_poderes.exception.ResourceNotFoundException("Poder no encontrado con id: " + id));
         return mapToResponse(poder);
     }
 
@@ -64,12 +64,28 @@ public class PoderService {
                 .collect(Collectors.toList());
     }
 
-    public void eliminarPoder(Long id) {
-        if (!poderRepository.existsById(id)) {
-            throw new RuntimeException("Poder no encontrado con id: " + id);
+        public PoderResponse actualizarPoder(Long id, PoderRequest request) {
+            Poder poder = poderRepository.findById(id)
+                    .orElseThrow(() -> new com.realmofvalyron.ms_poderes.exception.ResourceNotFoundException("Poder no encontrado con id: " + id));
+
+            poder.setNombre(request.getNombre());
+            poder.setDescripcion(request.getDescripcion());
+            poder.setTipoRaza(request.getTipoRaza());
+            poder.setNivelRequerido(request.getNivelRequerido());
+            poder.setDanio(request.getDanio());
+            poder.setCostoMana(request.getCostoMana());
+            poder.setTipoPoder(Poder.TipoPoder.valueOf(request.getTipoPoder()));
+
+            poderRepository.save(poder);
+            return mapToResponse(poder);
         }
-        poderRepository.deleteById(id);
-    }
+
+        public void eliminarPoder(Long id) {
+            if (!poderRepository.existsById(id)) {
+                throw new com.realmofvalyron.ms_poderes.exception.ResourceNotFoundException("Poder no encontrado con id: " + id);
+            }
+            poderRepository.deleteById(id);
+        }
 
     private PoderResponse mapToResponse(Poder poder) {
         return PoderResponse.builder()

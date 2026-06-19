@@ -15,7 +15,7 @@ public class RazaClient {
         return webClientBuilder
                 .build()
                 .get()
-                .uri("http://ms-razas/razas/{id}", razaId)
+                .uri("http://ms-razas/api/v1/razas/{id}", razaId)
                 .retrieve()
                 .bodyToMono(RazaDTO.class)
                 .block();

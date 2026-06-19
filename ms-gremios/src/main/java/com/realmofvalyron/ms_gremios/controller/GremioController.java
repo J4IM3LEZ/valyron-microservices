@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/gremios")
+@RequestMapping("/api/v1/gremios")
 @RequiredArgsConstructor
 public class GremioController {
 
@@ -19,7 +19,8 @@ public class GremioController {
 
     @PostMapping
     public ResponseEntity<GremioResponse> crearGremio(@Valid @RequestBody GremioRequest request) {
-        return ResponseEntity.ok(gremioService.crearGremio(request));
+        GremioResponse created = gremioService.crearGremio(request);
+        return ResponseEntity.created(java.net.URI.create("/api/v1/gremios/" + created.getId())).body(created);
     }
 
     @GetMapping
@@ -30,6 +31,11 @@ public class GremioController {
     @GetMapping("/{id}")
     public ResponseEntity<GremioResponse> obtenerGremioPorId(@PathVariable Long id) {
         return ResponseEntity.ok(gremioService.obtenerGremioPorId(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<GremioResponse> actualizarGremio(@PathVariable Long id, @Valid @RequestBody GremioRequest request) {
+        return ResponseEntity.ok(gremioService.actualizarGremio(id, request));
     }
 
     @PutMapping("/{id}/tesoro")

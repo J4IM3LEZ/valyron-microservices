@@ -1,5 +1,6 @@
 package com.realmofvalyron.ms_misiones.controller;
 
+import com.realmofvalyron.ms_misiones.assembler.MisionModelAssembler;
 import com.realmofvalyron.ms_misiones.dto.MisionRequest;
 import com.realmofvalyron.ms_misiones.dto.MisionResponse;
 import com.realmofvalyron.ms_misiones.service.MisionService;
@@ -16,6 +17,7 @@ import java.util.List;
 public class MisionController {
 
     private final MisionService misionService;
+    private final MisionModelAssembler assembler;
 
     @PostMapping
     public ResponseEntity<MisionResponse> crearMision(@Valid @RequestBody MisionRequest request) {
@@ -23,6 +25,29 @@ public class MisionController {
         return ResponseEntity.created(java.net.URI.create("/api/v1/misiones/" + created.getId())).body(created);
     }
 
+    @GetMapping
+    public ResponseEntity<List<MisionResponse>> listarMisiones(
+            @RequestParam(value = "nivel", required = false) Integer nivel,
+            @RequestParam(value = "dificultad", required = false) String dificultad) {
+
+        List<MisionResponse> misiones;
+
+        if (nivel != null) {
+            misiones = misionService.obtenerMisionesPorNivel(nivel);
+        } else if (dificultad != null && !dificultad.isBlank()) {
+            misiones = misionService.obtenerMisionesPorDificultad(dificultad);
+        } else {
+            misiones = misionService.listarMisiones();
+        }
+
+        List<MisionResponse> misionesConLinks = misiones.stream()
+                .map(assembler::toModel)
+                .toList();
+
+        return ResponseEntity.ok(misionesConLinks);
+    }
+
+    /*
     @GetMapping
     public ResponseEntity<List<MisionResponse>> listarMisiones(
             @RequestParam(value = "nivel", required = false) Integer nivel,
@@ -35,12 +60,20 @@ public class MisionController {
         }
         return ResponseEntity.ok(misionService.listarMisiones());
     }
+    */
 
+    @GetMapping("/{id}")
+    public ResponseEntity<MisionResponse> obtenerMisionPorId(@PathVariable Long id) {
+        MisionResponse mision = misionService.obtenerMisionPorId(id);
+        return ResponseEntity.ok(assembler.toModel(mision));
+    }
+
+    /*
     @GetMapping("/{id}")
     public ResponseEntity<MisionResponse> obtenerMisionPorId(@PathVariable Long id) {
         return ResponseEntity.ok(misionService.obtenerMisionPorId(id));
     }
-
+    */
     @PutMapping("/{id}")
     public ResponseEntity<MisionResponse> actualizarMision(@PathVariable Long id, @Valid @RequestBody MisionRequest request) {
         return ResponseEntity.ok(misionService.actualizarMision(id, request));

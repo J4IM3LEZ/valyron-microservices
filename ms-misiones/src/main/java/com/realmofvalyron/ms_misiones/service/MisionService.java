@@ -21,7 +21,7 @@ public class MisionService {
     public MisionResponse crearMision(MisionRequest request) {
 
         if (misionRepository.existsByNombre(request.getNombre())) {
-            throw new RuntimeException("Ya existe una mision con ese nombre");
+                    throw new com.realmofvalyron.ms_misiones.exception.BadRequestException("Ya existe una mision con ese nombre");
         }
 
         Mision mision = Mision.builder()
@@ -67,10 +67,10 @@ public class MisionService {
 
     public MisionResponse completarMision(Long id, Long personajeId, String nombrePersonaje) {
         Mision mision = misionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Mision no encontrada con id: " + id));
+                        .orElseThrow(() -> new com.realmofvalyron.ms_misiones.exception.ResourceNotFoundException("Mision no encontrada con id: " + id));
 
         if (mision.getEstadoMision() == Mision.EstadoMision.COMPLETADA) {
-            throw new RuntimeException("La mision ya fue completada");
+                    throw new com.realmofvalyron.ms_misiones.exception.BadRequestException("La mision ya fue completada");
         }
 
         mision.setEstadoMision(Mision.EstadoMision.COMPLETADA);
@@ -90,24 +90,39 @@ public class MisionService {
         return mapToResponse(mision);
     }
 
+    public MisionResponse actualizarMision(Long id, MisionRequest request) {
+        Mision mision = misionRepository.findById(id)
+                    .orElseThrow(() -> new com.realmofvalyron.ms_misiones.exception.ResourceNotFoundException("Mision no encontrada con id: " + id));
+
+        mision.setNombre(request.getNombre());
+        mision.setDescripcion(request.getDescripcion());
+        mision.setNivelRequerido(request.getNivelRequerido());
+        mision.setRecompensaXp(request.getRecompensaXp());
+        mision.setRecompensaOro(request.getRecompensaOro());
+        mision.setDificultad(Mision.Dificultad.valueOf(request.getDificultad()));
+
+        misionRepository.save(mision);
+        return mapToResponse(mision);
+    }
+
     public void eliminarMision(Long id) {
         if (!misionRepository.existsById(id)) {
-            throw new RuntimeException("Mision no encontrada con id: " + id);
+                throw new com.realmofvalyron.ms_misiones.exception.ResourceNotFoundException("Mision no encontrada con id: " + id);
         }
         misionRepository.deleteById(id);
     }
 
     private MisionResponse mapToResponse(Mision mision) {
         return MisionResponse.builder()
-                .id(mision.getId())
-                .nombre(mision.getNombre())
-                .descripcion(mision.getDescripcion())
-                .nivelRequerido(mision.getNivelRequerido())
-                .recompensaXp(mision.getRecompensaXp())
-                .recompensaOro(mision.getRecompensaOro())
-                .dificultad(mision.getDificultad().name())
-                .estadoMision(mision.getEstadoMision().name())
-                .build();
+                    .id(mision.getId())
+                    .nombre(mision.getNombre())
+                    .descripcion(mision.getDescripcion())
+                    .nivelRequerido(mision.getNivelRequerido())
+                    .recompensaXp(mision.getRecompensaXp())
+                    .recompensaOro(mision.getRecompensaOro())
+                    .dificultad(mision.getDificultad().name())
+                    .estadoMision(mision.getEstadoMision().name())
+                    .build();
     }
 
 }

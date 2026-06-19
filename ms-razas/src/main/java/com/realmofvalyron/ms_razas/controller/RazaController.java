@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/razas")
+@RequestMapping("/api/v1/razas")
 @RequiredArgsConstructor
 public class RazaController {
 
@@ -19,11 +19,15 @@ public class RazaController {
 
     @PostMapping
     public ResponseEntity<RazaResponse> crearRaza(@Valid @RequestBody RazaRequest request) {
-        return ResponseEntity.ok(razaService.crearRaza(request));
+        RazaResponse created = razaService.crearRaza(request);
+        return ResponseEntity.created(java.net.URI.create("/api/v1/razas/" + created.getId())).body(created);
     }
 
     @GetMapping
-    public ResponseEntity<List<RazaResponse>> listarRazas() {
+    public ResponseEntity<List<RazaResponse>> listarRazas(@RequestParam(value = "nombre", required = false) String nombre) {
+        if (nombre != null && !nombre.isBlank()) {
+            return ResponseEntity.ok(java.util.List.of(razaService.obtenerRazaPorNombre(nombre)));
+        }
         return ResponseEntity.ok(razaService.listarRazas());
     }
 
@@ -32,9 +36,9 @@ public class RazaController {
         return ResponseEntity.ok(razaService.obtenerRazaPorId(id));
     }
 
-    @GetMapping("/nombre/{nombre}")
-    public ResponseEntity<RazaResponse> obtenerRazaPorNombre(@PathVariable String nombre) {
-        return ResponseEntity.ok(razaService.obtenerRazaPorNombre(nombre));
+    @PutMapping("/{id}")
+    public ResponseEntity<RazaResponse> actualizarRaza(@PathVariable Long id, @Valid @RequestBody RazaRequest request) {
+        return ResponseEntity.ok(razaService.actualizarRaza(id, request));
     }
 
     @DeleteMapping("/{id}")

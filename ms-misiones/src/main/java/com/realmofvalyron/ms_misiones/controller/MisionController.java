@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/misiones")
+@RequestMapping("/api/v1/misiones")
 @RequiredArgsConstructor
 public class MisionController {
 
@@ -19,11 +19,20 @@ public class MisionController {
 
     @PostMapping
     public ResponseEntity<MisionResponse> crearMision(@Valid @RequestBody MisionRequest request) {
-        return ResponseEntity.ok(misionService.crearMision(request));
+        MisionResponse created = misionService.crearMision(request);
+        return ResponseEntity.created(java.net.URI.create("/api/v1/misiones/" + created.getId())).body(created);
     }
 
     @GetMapping
-    public ResponseEntity<List<MisionResponse>> listarMisiones() {
+    public ResponseEntity<List<MisionResponse>> listarMisiones(
+            @RequestParam(value = "nivel", required = false) Integer nivel,
+            @RequestParam(value = "dificultad", required = false) String dificultad) {
+        if (nivel != null) {
+            return ResponseEntity.ok(misionService.obtenerMisionesPorNivel(nivel));
+        }
+        if (dificultad != null && !dificultad.isBlank()) {
+            return ResponseEntity.ok(misionService.obtenerMisionesPorDificultad(dificultad));
+        }
         return ResponseEntity.ok(misionService.listarMisiones());
     }
 
@@ -32,14 +41,9 @@ public class MisionController {
         return ResponseEntity.ok(misionService.obtenerMisionPorId(id));
     }
 
-    @GetMapping("/nivel/{nivel}")
-    public ResponseEntity<List<MisionResponse>> obtenerMisionesPorNivel(@PathVariable Integer nivel) {
-        return ResponseEntity.ok(misionService.obtenerMisionesPorNivel(nivel));
-    }
-
-    @GetMapping("/dificultad/{dificultad}")
-    public ResponseEntity<List<MisionResponse>> obtenerMisionesPorDificultad(@PathVariable String dificultad) {
-        return ResponseEntity.ok(misionService.obtenerMisionesPorDificultad(dificultad));
+    @PutMapping("/{id}")
+    public ResponseEntity<MisionResponse> actualizarMision(@PathVariable Long id, @Valid @RequestBody MisionRequest request) {
+        return ResponseEntity.ok(misionService.actualizarMision(id, request));
     }
 
     @PutMapping("/{id}/completar")

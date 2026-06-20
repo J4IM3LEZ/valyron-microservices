@@ -21,7 +21,7 @@ public class HistorialClient {
             webClientBuilder
                     .build()
                     .post()
-                    .uri("http://localhost:8090/api/v1/eventos")
+                    .uri("http://ms-historial/api/v1/eventos")
                     .bodyValue(Map.of(
                             "personajeId", personajeId,
                             "tipo", "MISION_COMPLETADA",

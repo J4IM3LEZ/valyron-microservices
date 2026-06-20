@@ -1,15 +1,14 @@
 package com.realmofvalyron.ms_personajes.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.hateoas.RepresentationModel;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PersonajeResponse {
+@EqualsAndHashCode(callSuper = false)
+public class PersonajeResponse extends RepresentationModel<PersonajeResponse> {
 
     private Long id;
     private String nombre;

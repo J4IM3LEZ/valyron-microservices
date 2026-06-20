@@ -1,15 +1,14 @@
 package com.realmofvalyron.ms_razas.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.hateoas.RepresentationModel;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RazaResponse {
+@EqualsAndHashCode(callSuper = false)
+public class RazaResponse extends RepresentationModel<RazaResponse> {
 
     private Long id;
     private String nombre;

@@ -1,15 +1,14 @@
 package com.realmofvalyron.ms_misiones.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.hateoas.RepresentationModel;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MisionResponse {
+@EqualsAndHashCode(callSuper = false)
+public class MisionResponse extends RepresentationModel<MisionResponse> {
 
     private Long id;
     private String nombre;

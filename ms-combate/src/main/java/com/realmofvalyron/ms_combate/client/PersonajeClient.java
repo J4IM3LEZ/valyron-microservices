@@ -15,7 +15,7 @@ public class PersonajeClient {
         return webClientBuilder
                 .build()
                 .get()
-                .uri("http://localhost:8082/personajes/{id}", personajeId)
+                .uri("http://ms-personajes/api/v1/personajes/{id}", personajeId)
                 .header("Authorization", "Bearer " + token)
                 .retrieve()
                 .bodyToMono(PersonajeDTO.class)

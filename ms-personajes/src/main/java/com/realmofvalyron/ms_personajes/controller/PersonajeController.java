@@ -70,6 +70,11 @@ public class PersonajeController {
         return ResponseEntity.ok(personajeService.actualizarPersonaje(id, request));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<PersonajeResponse> actualizarPersonaje(@PathVariable Long id, @Valid @RequestBody PersonajeRequest request) {
+        return ResponseEntity.ok(personajeService.actualizarPersonaje(id, request));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarPersonaje(@PathVariable Long id) {
         personajeService.eliminarPersonaje(id);

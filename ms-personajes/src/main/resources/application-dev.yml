@@ -1,0 +1,47 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: ms-personajes
+
+  # Base de datos propia de ms-personajes
+  datasource:
+    url: jdbc:mysql://localhost:3306/personajes_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # JPA
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+
+  # Compatibilidad Spring Cloud y Arranque
+  cloud:
+    compatibility-verifier:
+      enabled: false
+  main:
+    web-application-type: servlet
+
+# Eureka Client
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+# Configuración de comunicación entre microservicios
+ms-razas:
+  url: http://ms-razas
+
+# Documentación Swagger / OpenApi
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+    version: openapi_3_0

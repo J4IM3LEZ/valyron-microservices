@@ -1,0 +1,28 @@
+server:
+  port: 0
+
+spring:
+  application:
+    name: ms-misiones-test
+
+  # Base de datos en memoria H2 para pruebas limpias
+  datasource:
+    url: jdbc:h2:mem:misiones_test_db;DB_CLOSE_DELAY=-1;MODE=MySQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  # JPA específico para pruebas (crea y destruye la BD en cada test)
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+  # Desactivar Eureka en los tests
+  cloud:
+    compatibility-verifier:
+      enabled: false
+eureka:
+  client:
+    enabled: false

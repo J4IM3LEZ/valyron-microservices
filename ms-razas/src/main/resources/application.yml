@@ -1,0 +1,5 @@
+spring:
+  profiles:
+    # Cambiar: usa 'test' para ejecutar las pruebas unitarias independientes,
+    # o cambia a 'dev' para conectar el microservicio al ecosistema real de Docker.
+    active: dev

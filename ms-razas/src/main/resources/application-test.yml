@@ -1,0 +1,26 @@
+server:
+  # Usa un puerto aleatorio para los tests para evitar conflictos de puertos bloqueados
+  port: 0
+
+spring:
+  application:
+    name: ms-razas-test
+
+  # Base de datos H2 en memoria (No toca tu MySQL de Docker)
+  datasource:
+    url: jdbc:h2:mem:razas_test_db;DB_CLOSE_DELAY=-1;MODE=MySQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  # Configuración de JPA para la base de datos de prueba
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+# Apagamos Eureka para que el test no intente buscar el servidor en red
+eureka:
+  client:
+    enabled: false

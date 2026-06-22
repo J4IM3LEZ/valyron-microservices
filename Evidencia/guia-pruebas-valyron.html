@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realm of Valyron - Guía Completa de Pruebas API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        /* PORTADA */
+        .portada {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 40px;
+            text-align: center;
+            page-break-after: always;
+        }
+
+        .portada h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .portada .subtitle {
+            font-size: 24px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .portada .info {
+            font-size: 14px;
+            margin-top: 60px;
+            opacity: 0.8;
+        }
+
+        .portada .version {
+            font-size: 12px;
+            margin-top: 20px;
+        }
+
+        /* TABLA DE CONTENIDO */
+        .toc {
+            padding: 40px;
+            page-break-after: always;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .toc h2 {
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .toc ul {
+            list-style: none;
+        }
+
+        .toc li {
+            margin: 10px 0;
+            padding-left: 20px;
+            border-left: 3px solid #667eea;
+        }
+
+        .toc a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        /* SECCIONES */
+        .section {
+            padding: 40px;
+            page-break-after: always;
+            border-bottom: 2px solid #eee;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .port-badge {
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .section > p {
+            color: #666;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .endpoints-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+        }
+
+        .endpoints-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #667eea;
+        }
+
+        .endpoints-table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+
+        .endpoints-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .method {
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            width: 50px;
+            text-align: center;
+            color: white;
+        }
+
+        .method.get {
+            background: #61affe;
+        }
+
+        .method.post {
+            background: #49cc90;
+        }
+
+        .method.put {
+            background: #fca130;
+        }
+
+        .method.delete {
+            background: #f93e3e;
+        }
+
+        .url {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            background: #f4f4f4;
+            padding: 4px 8px;
+            border-radius: 4px;
+            word-break: break-all;
+        }
+
+        /* REQUEST BODY */
+        .request-body {
+            background: #f4f4f4;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .request-body h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .json-code {
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: #333;
+        }
+
+        /* ORDEN RECOMENDADO */
+        .testing-order {
+            padding: 40px;
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            page-break-after: always;
+        }
+
+        .testing-order h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .testing-order ol {
+            margin-left: 20px;
+        }
+
+        .testing-order li {
+            margin: 12px 0;
+            line-height: 1.8;
+        }
+
+        /* SWAGGER URLs */
+        .swagger-section {
+            padding: 40px;
+            page-break-after: always;
+        }
+
+        .swagger-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .swagger-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #ddd;
+        }
+
+        .swagger-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .swagger-table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+
+        .swagger-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .swagger-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .swagger-link:hover {
+            text-decoration: underline;
+        }
+
+        /* INSTRUCCIONES */
+        .instructions {
+            padding: 40px;
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .instructions h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .instructions p {
+            color: #856404;
+            margin: 8px 0;
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+
+            .section,
+            .toc,
+            .testing-order,
+            .swagger-section {
+                page-break-inside: avoid;
+                page-break-after: always;
+            }
+
+            a {
+                color: #667eea;
+            }
+
+            .method,
+            .port-badge {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+        }
+
+        /* RESPONSIVO */
+        @media (max-width: 768px) {
+            .portada h1 {
+                font-size: 36px;
+            }
+
+            .portada .subtitle {
+                font-size: 18px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .endpoints-table {
+                font-size: 12px;
+            }
+
+            .endpoints-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- PORTADA -->
+        <div class="portada">
+            <h1>⚔️ Realm of Valyron</h1>
+            <div class="subtitle">Guía Completa de Pruebas API</div>
+            <div class="info">
+                <p>Documentación oficial para pruebas en Postman y Swagger UI</p>
+                <p>11 Microservicios • 65+ Endpoints • Puerto 8080-8090</p>
+            </div>
+            <div class="version">
+                Versión 1.0.0 | Fecha: 2026-06-21
+            </div>
+        </div>
+
+        <!-- TABLA DE CONTENIDO -->
+        <div class="toc">
+            <h2>📋 Tabla de Contenido</h2>
+            <ul>
+                <li><a href="#intro">1. Introducción</a></li>
+                <li><a href="#auth">2. ms-auth (Puerto 8080)</a></li>
+                <li><a href="#razas">3. ms-razas (Puerto 8081)</a></li>
+                <li><a href="#personajes">4. ms-personajes (Puerto 8082)</a></li>
+                <li><a href="#objetos">5. ms-objetos (Puerto 8083)</a></li>
+                <li><a href="#inventario">6. ms-inventario (Puerto 8084)</a></li>
+                <li><a href="#poderes">7. ms-poderes (Puerto 8085)</a></li>
+                <li><a href="#regiones">8. ms-regiones (Puerto 8086)</a></li>
+                <li><a href="#combate">9. ms-combate (Puerto 8087)</a></li>
+                <li><a href="#misiones">10. ms-misiones (Puerto 8088)</a></li>
+                <li><a href="#gremios">11. ms-gremios (Puerto 8089)</a></li>
+                <li><a href="#historial">12. ms-historial (Puerto 8090)</a></li>
+                <li><a href="#testing-order">13. Orden Recomendado de Pruebas</a></li>
+                <li><a href="#swagger">14. URLs de Swagger</a></li>
+            </ul>
+        </div>
+
+        <!-- INTRODUCCIÓN -->
+        <div class="section" id="intro">
+            <h2>📖 Introducción</h2>
+            <p>Esta guía contiene todos los endpoints de los 11 microservicios del proyecto Realm of Valyron, con métodos HTTP, URLs, y ejemplos de JSON para pruebas.</p>
+
+            <div class="instructions">
+                <h4>⚡ Inicio Rápido</h4>
+                <p><strong>1. Importar en Postman:</strong> Importa el archivo <code>Postman_Collection.json</code></p>
+                <p><strong>2. Obtener JWT:</strong> Ejecuta POST /api/v1/auth/login para obtener el token</p>
+                <p><strong>3. Usar el token:</strong> Copia el token en la variable <code>{{jwtToken}}</code> de la colección</p>
+                <p><strong>4. Pruebas en vivo:</strong> Haz clic en "Send" en cada request</p>
+                <p><strong>5. Probar en Swagger:</strong> Abre los URLs del navegador para pruebas interactivas</p>
+            </div>
+
+            <h3 style="color: #764ba2; margin-top: 20px;">Autenticación</h3>
+            <p>
+                <strong>Servicios que requieren JWT:</strong>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>ms-inventario (POST /api/v1/inventarios)</li>
+                    <li>ms-combate (POST /api/v1/combates)</li>
+                </ul>
+            </p>
+            <p style="margin-top: 10px;">
+                <strong>Servicios abiertos:</strong> Todos los demás no requieren autenticación.
+            </p>
+        </div>
+
+        <!-- ms-auth -->
+        <div class="section" id="auth">
+            <h2>🔐 ms-auth <span class="port-badge">Puerto 8080</span></h2>
+            <p>Autenticación y generación de tokens JWT</p>
+
+            <table class="endpoints-table">
+                <thead>
+                    <tr>
+                        <th width="100">Método</th>
+                        <th>Endpoint</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="method post">POST</span></td>
+                        <td><span class="url">/api/v1/auth/register</span></td>
+                        <td>Registrar nuevo usuario</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method post">POST</span></td>
+                        <td><span class="url">/api/v1/auth/login</span></td>
+                        <td>Obtener JWT token</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="request-body">
+                <h4>Request: POST /api/v1/auth/register</h4>
+                <div class="json-code">{
+  "username": "admin_valyron",
+  "email": "admin@valyron.com",
+  "password": "valyron123",
+  "rol": "ADMIN"
+}</div>
+            </div>
+
+            <div class="request-body">
+                <h4>Request: POST /api/v1/auth/login</h4>
+                <div class="json-code">{
+  "username": "admin_valyron",
+  "password": "valyron123"
+}</div>
+            </div>
+
+            <div class="instructions">
+                <h4>✅ Resultado esperado</h4>
+                <p>Login devuelve <code>{ "token": "eyJhbGciOi..." }</code></p>
+                <p>Copiar el valor del token y pegarlo en variable <code>{{jwtToken}}</code></p>
+            </div>
+        </div>
+
+        <!-- ms-razas -->
+        <div class="section" id="razas">
+            <h2>🧝 ms-razas <span class="port-badge">Puerto 8081</span></h2>
+            <p>Gestión de razas jugables con bonificaciones estadísticas</p>
+
+            <table class="endpoints-table">
+                <thead>
+                    <tr>
+                        <th width="100">Método</th>
+                        <th>Endpoint</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="method post">POST</span></td>
+                        <td><span class="url">/api/v1/razas</span></td>
+                        <td>Crear nueva raza</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/razas</span></td>
+                        <td>Listar todas las razas</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/razas?nombre=Elfico</span></td>
+                        <td>Buscar por nombre</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/razas/{id}</span></td>
+                        <td>Obtener una raza por ID</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method put">PUT</span></td>
+                        <td><span class="url">/api/v1/razas/{id}</span></td>
+                        <td>Actualizar raza (pisar datos)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method delete">DELETE</span></td>
+                        <td><span class="url">/api/v1/razas/{id}</span></td>
+                        <td>Eliminar raza</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="request-body">
+                <h4>Request: POST /api/v1/razas (Nueva raza ID 7)</h4>
+                <div class="json-code">{
+  "nombre": "Dragón",
+  "descripcion": "Raza ancestral de dragones",
+  "bonusFuerza": 8,
+  "bonusDestreza": 3,
+  "bonusSabiduria": 6,
+  "bonusVitalidad": 8,
+  "habilidadInnata": "Aliento de Fuego",
+  "restricciones": "Solo para guerreros avanzados"
+}</div>
+            </div>
+
+            <div class="request-body">
+                <h4>Request: PUT /api/v1/razas/1 (Overwrite Elfico)</h4>
+                <div class="json-code">{
+  "nombre": "Elfico Oscuro",
+  "descripcion": "Rama oscura de los elfos, magia corrupta",
+  "bonusFuerza": 3,
+  "bonusDestreza": 6,
+  "bonusSabiduria": 6,
+  "bonusVitalidad": 3,
+  "habilidadInnata": "Magia de las Sombras",
+  "restricciones": "No puede aliarse con Hombres"
+}</div>
+            </div>
+
+            <p><strong>Razas semilla (IDs 1-6):</strong> Elfico, Enano, Hobbit, Hombre, Orco, Mago Istari</p>
+        </div>
+
+        <!-- ms-personajes -->
+        <div class="section" id="personajes">
+            <h2>⚔️ ms-personajes <span class="port-badge">Puerto 8082</span></h2>
+            <p>Gestión de personajes jugables</p>
+
+            <table class="endpoints-table">
+                <thead>
+                    <tr>
+                        <th width="100">Método</th>
+                        <th>Endpoint</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="method post">POST</span></td>
+                        <td><span class="url">/api/v1/personajes</span></td>
+                        <td>Crear nuevo personaje</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/personajes</span></td>
+                        <td>Listar todos los personajes</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/personajes/{id}</span></td>
+                        <td>Obtener personaje por ID</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method put">PUT</span></td>
+                        <td><span class="url">/api/v1/personajes/{id}</span></td>
+                        <td>Actualizar personaje</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method delete">DELETE</span></td>
+                        <td><span class="url">/api/v1/personajes/{id}</span></td>
+                        <td>Eliminar personaje</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="request-body">
+                <h4>Request: POST /api/v1/personajes</h4>
+                <div class="json-code">{
+  "nombre": "Boromir",
+  "razaId": 4
+}</div>
+            </div>
+
+            <p><strong>Personajes semilla (IDs 1-6):</strong> Legolas, Gimli, Frodo, Aragorn, Lurtz, Gandalf</p>
+        </div>
+
+        <!-- ms-objetos -->
+        <div class="section" id="objetos">
+            <h2>🎁 ms-objetos <span class="port-badge">Puerto 8083</span></h2>
+            <p>Catálogo de items y equipo del juego</p>
+
+            <table class="endpoints-table">
+                <thead>
+                    <tr>
+                        <th width="100">Método</th>
+                        <th>Endpoint</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="method post">POST</span></td>
+                        <td><span class="url">/api/v1/objetos</span></td>
+                        <td>Crear nuevo objeto</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/objetos</span></td>
+                        <td>Listar todos los objetos</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/objetos/tipo/{tipo}</span></td>
+                        <td>Filtrar por tipo (ARMA, ARMADURA, ESCUDO)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/objetos/nivel/{nivel}</span></td>
+                        <td>Filtrar por nivel mínimo</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method put">PUT</span></td>
+                        <td><span class="url">/api/v1/objetos/{id}</span></td>
+                        <td>Actualizar objeto</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method delete">DELETE</span></td>
+                        <td><span class="url">/api/v1/objetos/{id}</span></td>
+                        <td>Eliminar objeto</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="request-body">
+                <h4>Request: POST /api/v1/objetos</h4>
+                <div class="json-code">{
+  "nombre": "Arco Élfico de Galadriel",
+  "tipo": "ARMA",
+  "rareza": "LEGENDARIO",
+  "bonusFuerza": 0,
+  "bonusDestreza": 10,
+  "bonusSabiduria": 3,
+  "bonusVida": 0,
+  "nivelMinimo": 8,
+  "razaRequerida": "ELFICO",
+  "peso": 2,
+  "descripcion": "Arco forjado en Lothlórien"
+}</div>
+            </div>
+
+            <p><strong>Objetos semilla (IDs 1-6):</strong> Glamdring, Hacha de Durin, Daga de Sigilo, Armadura de Gondor, Escudo Orco, Bastón de Saruman</p>
+        </div>
+
+        <!-- ms-inventario -->
+        <div class="section" id="inventario">
+            <h2>🎒 ms-inventario <span class="port-badge">Puerto 8084</span> 🔒 <span style="color: #f93e3e; font-size: 12px;">[REQUIERE JWT]</span></h2>
+            <p>Sistema de inventario para personajes</p>
+
+            <table class="endpoints-table">
+                <thead>
+                    <tr>
+                        <th width="100">Método</th>
+                        <th>Endpoint</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="method post">POST</span></td>
+                        <td><span class="url">/api/v1/inventarios</span></td>
+                        <td>Agregar objeto al inventario</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/inventarios?personajeId={id}</span></td>
+                        <td>Ver inventario de personaje</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method put">PUT</span></td>
+                        <td><span class="url">/api/v1/inventarios/equipar/{pid}/{oid}</span></td>
+                        <td>Equipar objeto</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method put">PUT</span></td>
+                        <td><span class="url">/api/v1/inventarios/desequipar/{pid}/{oid}</span></td>
+                        <td>Desequipar objeto</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method delete">DELETE</span></td>
+                        <td><span class="url">/api/v1/inventarios/{pid}/{oid}</span></td>
+                        <td>Eliminar del inventario</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="request-body">
+                <h4>Request: POST /api/v1/inventarios 🔒 (Requiere Authorization Bearer)</h4>
+                <div class="json-code">{
+  "personajeId": 1,
+  "objetoId": 7
+}</div>
+            </div>
+
+            <div class="instructions">
+                <h4>🔐 Autenticación requerida</h4>
+                <p>Header: <code>Authorization: Bearer {{jwtToken}}</code></p>
+            </div>
+        </div>
+
+        <!-- ms-poderes -->
+        <div class="section" id="poderes">
+            <h2>✨ ms-poderes <span class="port-badge">Puerto 8085</span></h2>
+            <p>Gestión de habilidades y poderes</p>
+
+            <table class="endpoints-table">
+                <thead>
+                    <tr>
+                        <th width="100">Método</th>
+                        <th>Endpoint</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="method post">POST</span></td>
+                        <td><span class="url">/api/v1/poderes</span></td>
+                        <td>Crear nuevo poder</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/poderes</span></td>
+                        <td>Listar todos los poderes</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/poderes?raza={raza}</span></td>
+                        <td>Filtrar por raza</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/poderes?nivel={nivel}</span></td>
+                        <td>Filtrar por nivel</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method put">PUT</span></td>
+                        <td><span class="url">/api/v1/poderes/{id}</span></td>
+                        <td>Actualizar poder</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method delete">DELETE</span></td>
+                        <td><span class="url">/api/v1/poderes/{id}</span></td>
+                        <td>Eliminar poder</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="request-body">
+                <h4>Request: POST /api/v1/poderes</h4>
+                <div class="json-code">{
+  "nombre": "Tiro Múltiple",
+  "descripcion": "Dispara tres flechas simultáneas",
+  "tipoRaza": "Elfico",
+  "nivelRequerido": 5,
+  "danio": 60,
+  "costoMana": 35,
+  "tipoPoder": "ATAQUE"
+}</div>
+            </div>
+        </div>
+
+        <!-- ms-regiones -->
+        <div class="section" id="regiones">
+            <h2>🗺️ ms-regiones <span class="port-badge">Puerto 8086</span></h2>
+            <p>Gestión de regiones del mundo jugable</p>
+
+            <table class="endpoints-table">
+                <thead>
+                    <tr>
+                        <th width="100">Método</th>
+                        <th>Endpoint</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="method post">POST</span></td>
+                        <td><span class="url">/api/v1/regiones</span></td>
+                        <td>Crear nueva región</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/regiones</span></td>
+                        <td>Listar todas las regiones</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/regiones/disponibles</span></td>
+                        <td>Regiones disponibles</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/regiones/nivel/{nivel}</span></td>
+                        <td>Filtrar por nivel de peligro</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/regiones/tipo/{tipo}</span></td>
+                        <td>Filtrar por tipo</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/regiones/{rid}/acceso/{niv}</span></td>
+                        <td>Verificar acceso del personaje</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method put">PUT</span></td>
+                        <td><span class="url">/api/v1/regiones/{id}</span></td>
+                        <td>Actualizar región</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method delete">DELETE</span></td>
+                        <td><span class="url">/api/v1/regiones/{id}</span></td>
+                        <td>Eliminar región</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="request-body">
+                <h4>Request: POST /api/v1/regiones</h4>
+                <div class="json-code">{
+  "nombre": "Fangorn",
+  "descripcion": "Bosque antiguo habitado por los Ents",
+  "lore": "El bosque más viejo de la Tierra Media",
+  "nivelPeligro": 20,
+  "nivelMinimoAcceso": 4,
+  "tipo": "BOSQUE",
+  "disponible": true
+}</div>
+            </div>
+        </div>
+
+        <!-- ms-combate -->
+        <div class="section" id="combate">
+            <h2>⚡ ms-combate <span class="port-badge">Puerto 8087</span> 🔒 <span style="color: #f93e3e; font-size: 12px;">[POST REQUIERE JWT]</span></h2>
+            <p>Motor de batalla y combate</p>
+
+            <table class="endpoints-table">
+                <thead>
+                    <tr>
+                        <th width="100">Método</th>
+                        <th>Endpoint</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="method post">POST</span></td>
+                        <td><span class="url">/api/v1/combates</span></td>
+                        <td>Iniciar batalla</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/combates?personajeId={id}</span></td>
+                        <td>Ver batallas de personaje</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/combates/victorias?personajeId={id}</span></td>
+                        <td>Ver victorias de personaje</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/combates/victorias/total?personajeId={id}</span></td>
+                        <td>Total de victorias</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="request-body">
+                <h4>Request: POST /api/v1/combates 🔒</h4>
+                <div class="json-code">{
+  "personajeId": 4,
+  "nombreEnemigo": "Saruman",
+  "tipoEnemigo": "JEFE",
+  "poderUsado": "Adaptabilidad",
+  "regionId": 4
+}</div>
+            </div>
+        </div>
+
+        <!-- ms-misiones -->
+        <div class="section" id="misiones">
+            <h2>📜 ms-misiones <span class="port-badge">Puerto 8088</span></h2>
+            <p>Sistema de quests y misiones</p>
+
+            <table class="endpoints-table">
+                <thead>
+                    <tr>
+                        <th width="100">Método</th>
+                        <th>Endpoint</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="method post">POST</span></td>
+                        <td><span class="url">/api/v1/misiones</span></td>
+                        <td>Crear nueva misión</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/misiones</span></td>
+                        <td>Listar todas las misiones</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/misiones?nivel={nivel}</span></td>
+                        <td>Filtrar por nivel</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/misiones?dificultad={diff}</span></td>
+                        <td>Filtrar por dificultad</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method put">PUT</span></td>
+                        <td><span class="url">/api/v1/misiones/{id}</span></td>
+                        <td>Actualizar misión</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method put">PUT</span></td>
+                        <td><span class="url">/api/v1/misiones/{id}/completar?personajeId=X&nombrePersonaje=Y</span></td>
+                        <td>Marcar misión como completada</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method delete">DELETE</span></td>
+                        <td><span class="url">/api/v1/misiones/{id}</span></td>
+                        <td>Eliminar misión</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="request-body">
+                <h4>Request: POST /api/v1/misiones</h4>
+                <div class="json-code">{
+  "nombre": "La Batalla de los Cinco Ejércitos",
+  "descripcion": "Defender Erebor de los ejércitos de Azog",
+  "nivelRequerido": 12,
+  "recompensaXp": 1500,
+  "recompensaOro": 750,
+  "dificultad": "LEGENDARIA"
+}</div>
+            </div>
+        </div>
+
+        <!-- ms-gremios -->
+        <div class="section" id="gremios">
+            <h2>🏰 ms-gremios <span class="port-badge">Puerto 8089</span></h2>
+            <p>Sistema de gremios y hermandades</p>
+
+            <table class="endpoints-table">
+                <thead>
+                    <tr>
+                        <th width="100">Método</th>
+                        <th>Endpoint</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="method post">POST</span></td>
+                        <td><span class="url">/api/v1/gremios</span></td>
+                        <td>Crear nuevo gremio</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/gremios</span></td>
+                        <td>Listar todos los gremios</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/gremios/{id}</span></td>
+                        <td>Obtener gremio por ID</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method put">PUT</span></td>
+                        <td><span class="url">/api/v1/gremios/{id}</span></td>
+                        <td>Actualizar gremio</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method put">PUT</span></td>
+                        <td><span class="url">/api/v1/gremios/{id}/tesoro?oro={cantidad}</span></td>
+                        <td>Agregar oro al tesoro</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method put">PUT</span></td>
+                        <td><span class="url">/api/v1/gremios/{id}/disolver</span></td>
+                        <td>Disolver gremio</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method delete">DELETE</span></td>
+                        <td><span class="url">/api/v1/gremios/{id}</span></td>
+                        <td>Eliminar gremio</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="request-body">
+                <h4>Request: POST /api/v1/gremios</h4>
+                <div class="json-code">{
+  "nombre": "Los Exploradores de Mirkwood",
+  "descripcion": "Gremio élfico especializado en exploración",
+  "guardianId": 1
+}</div>
+            </div>
+        </div>
+
+        <!-- ms-historial -->
+        <div class="section" id="historial">
+            <h2>📖 ms-historial <span class="port-badge">Puerto 8090</span></h2>
+            <p>Registro y seguimiento de eventos históricos</p>
+
+            <table class="endpoints-table">
+                <thead>
+                    <tr>
+                        <th width="100">Método</th>
+                        <th>Endpoint</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="method post">POST</span></td>
+                        <td><span class="url">/api/v1/eventos</span></td>
+                        <td>Registrar nuevo evento</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/eventos</span></td>
+                        <td>Listar todos los eventos</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/eventos?personajeId={id}</span></td>
+                        <td>Filtrar por personaje</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/eventos?tipo={tipo}</span></td>
+                        <td>Filtrar por tipo de evento</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/eventos/batallas</span></td>
+                        <td>Listar solo batallas</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method get">GET</span></td>
+                        <td><span class="url">/api/v1/eventos/total?personajeId=X&tipo=Y</span></td>
+                        <td>Contar eventos</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="request-body">
+                <h4>Request: POST /api/v1/eventos</h4>
+                <div class="json-code">{
+  "personajeId": 4,
+  "tipo": "BATALLA",
+  "descripcion": "Aragorn derroto a Saruman en combate épico",
+  "referenciaId": 7,
+  "nombrePersonaje": "Aragorn el Rey",
+  "detalles": "Batalla en Minas Tirith, victoria decisiva"
+}</div>
+            </div>
+
+            <p><strong>Tipos de eventos:</strong> BATALLA, MISION_COMPLETADA, OBJETO_ADQUIRIDO, GREMIO_UNIDO, PODER_APRENDIDO, REGION_EXPLORADA</p>
+        </div>
+
+        <!-- ORDEN DE PRUEBAS -->
+        <div class="testing-order" id="testing-order">
+            <h2>🎯 Orden Recomendado de Pruebas</h2>
+            <p>Sigue este orden para evitar errores de dependencias:</p>
+            <ol>
+                <li><strong>ms-auth (8080)</strong> → POST /login para obtener JWT token</li>
+                <li><strong>ms-razas (8081)</strong> → Crear y listar razas (base para personajes)</li>
+                <li><strong>ms-personajes (8082)</strong> → Crear personajes con razas existentes</li>
+                <li><strong>ms-objetos (8083)</strong> → Crear objetos (base para inventario)</li>
+                <li><strong>ms-regiones (8086)</strong> → Crear regiones (base para combate)</li>
+                <li><strong>ms-poderes (8085)</strong> → Crear poderes (independiente)</li>
+                <li><strong>ms-inventario (8084)</strong> → Agregar objetos a personajes 🔒</li>
+                <li><strong>ms-combate (8087)</strong> → Iniciar batallas 🔒</li>
+                <li><strong>ms-misiones (8088)</strong> → Crear y completar misiones</li>
+                <li><strong>ms-gremios (8089)</strong> → Crear gremios con guardianes</li>
+                <li><strong>ms-historial (8090)</strong> → Registrar eventos</li>
+            </ol>
+
+            <div class="instructions" style="margin-top: 30px;">
+                <h4>💡 Tips importantes</h4>
+                <p>✅ Al completar login, copiar token y pegarlo en <code>{{jwtToken}}</code></p>
+                <p>✅ Los IDs semilla (1-6) ya existen, puedes pisarlos con PUT</p>
+                <p>✅ Los nuevos registros reciben ID 7, 8, 9, etc.</p>
+                <p>✅ Las referencias entre servicios usan IDs (razaId, objetoId, personajeId, etc.)</p>
+                <p>✅ Para ms-inventario y ms-combate, incluir header de autenticación</p>
+            </div>
+        </div>
+
+        <!-- SWAGGER URLs -->
+        <div class="swagger-section" id="swagger">
+            <h2>🔍 URLs de Swagger UI</h2>
+            <p>Abre estas URLs en el navegador para pruebas interactivas (Requiere que los servicios estén corriendo en Docker)</p>
+
+            <table class="swagger-table">
+                <thead>
+                    <tr>
+                        <th>Microservicio</th>
+                        <th>Puerto</th>
+                        <th>URL Swagger</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ms-auth</td>
+                        <td>8080</td>
+                        <td><a href="http://localhost:8080/swagger-ui.html" class="swagger-link">http://localhost:8080/swagger-ui.html</a></td>
+                    </tr>
+                    <tr>
+                        <td>ms-razas</td>
+                        <td>8081</td>
+                        <td><a href="http://localhost:8081/swagger-ui.html" class="swagger-link">http://localhost:8081/swagger-ui.html</a></td>
+                    </tr>
+                    <tr>
+                        <td>ms-personajes</td>
+                        <td>8082</td>
+                        <td><a href="http://localhost:8082/swagger-ui.html" class="swagger-link">http://localhost:8082/swagger-ui.html</a></td>
+                    </tr>
+                    <tr>
+                        <td>ms-objetos</td>
+                        <td>8083</td>
+                        <td><a href="http://localhost:8083/swagger-ui.html" class="swagger-link">http://localhost:8083/swagger-ui.html</a></td>
+                    </tr>
+                    <tr>
+                        <td>ms-inventario</td>
+                        <td>8084</td>
+                        <td><a href="http://localhost:8084/swagger-ui.html" class="swagger-link">http://localhost:8084/swagger-ui.html</a></td>
+                    </tr>
+                    <tr>
+                        <td>ms-poderes</td>
+                        <td>8085</td>
+                        <td><a href="http://localhost:8085/swagger-ui.html" class="swagger-link">http://localhost:8085/swagger-ui.html</a></td>
+                    </tr>
+                    <tr>
+                        <td>ms-regiones</td>
+                        <td>8086</td>
+                        <td><a href="http://localhost:8086/swagger-ui.html" class="swagger-link">http://localhost:8086/swagger-ui.html</a></td>
+                    </tr>
+                    <tr>
+                        <td>ms-combate</td>
+                        <td>8087</td>
+                        <td><a href="http://localhost:8087/swagger-ui.html" class="swagger-link">http://localhost:8087/swagger-ui.html</a></td>
+                    </tr>
+                    <tr>
+                        <td>ms-misiones</td>
+                        <td>8088</td>
+                        <td><a href="http://localhost:8088/swagger-ui.html" class="swagger-link">http://localhost:8088/swagger-ui.html</a></td>
+                    </tr>
+                    <tr>
+                        <td>ms-gremios</td>
+                        <td>8089</td>
+                        <td><a href="http://localhost:8089/swagger-ui.html" class="swagger-link">http://localhost:8089/swagger-ui.html</a></td>
+                    </tr>
+                    <tr>
+                        <td>ms-historial</td>
+                        <td>8090</td>
+                        <td><a href="http://localhost:8090/swagger-ui.html" class="swagger-link">http://localhost:8090/swagger-ui.html</a></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="instructions" style="margin-top: 30px;">
+                <h4>📱 Cómo usar Swagger UI</h4>
+                <p><strong>1.</strong> Abre cualquier URL de Swagger en el navegador</p>
+                <p><strong>2.</strong> Haz clic en un endpoint para expandirlo</p>
+                <p><strong>3.</strong> Haz clic en "Try it out"</p>
+                <p><strong>4.</strong> Completa el formulario con los valores</p>
+                <p><strong>5.</strong> Haz clic en "Execute" para enviar la solicitud</p>
+                <p><strong>6.</strong> Verás la respuesta en formato JSON</p>
+                <p style="margin-top: 15px;"><strong>Para endpoints con JWT:</strong> Haz clic en el botón 🔒 "Authorize" arriba → ingresa <code>Bearer {token}</code></p>
+            </div>
+        </div>
+
+        <!-- NOTA FINAL -->
+        <div class="section" style="background: #f0f4ff;">
+            <h2>📋 Notas Finales</h2>
+            <ul style="margin-left: 20px; line-height: 2;">
+                <li>Todos los microservicios están en <code>localhost</code> con puertos 8080-8090</li>
+                <li>JSON debe incluir encabezado <code>Content-Type: application/json</code></li>
+                <li>Los servicios ms-inventario y ms-combate requieren token JWT en el header</li>
+                <li>Base de datos: MySQL con datos semilla pre-cargados (IDs 1-6)</li>
+                <li>Documentación: Cada servicio tiene Swagger UI en <code>/swagger-ui.html</code></li>
+                <li>Para imprimir como PDF: Ctrl+P → Guardar como PDF</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,1268 @@
+{
+  "info": {
+    "name": "Realm of Valyron - API Test Collection",
+    "description": "Complete API testing collection for all 11 microservices (8080-8090). Includes all CRUD endpoints, pre-configured bodies, and JWT authentication.",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "jwtToken",
+      "value": "",
+      "type": "string",
+      "description": "JWT token obtained from /api/v1/auth/login. Paste the token value here after login."
+    }
+  ],
+  "item": [
+    {
+      "name": "1. ms-auth (Port 8080)",
+      "item": [
+        {
+          "name": "1.1 Register User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    console.log('User registered successfully');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"admin_valyron\", \"email\": \"admin@valyron.com\", \"password\": \"valyron123\", \"rol\": \"ADMIN\"}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/auth/register",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "v1", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "1.2 Login (Get JWT Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.token) {",
+                  "        pm.collectionVariables.set('jwtToken', jsonData.token);",
+                  "        console.log('JWT Token stored: ' + jsonData.token.substring(0, 20) + '...');",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"admin_valyron\", \"password\": \"valyron123\"}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/v1/auth/login",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "v1", "auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. ms-razas (Port 8081)",
+      "item": [
+        {
+          "name": "2.1 Create New Raza (ID 7)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\": \"Dragón\", \"descripcion\": \"Raza ancestral de dragones\", \"bonusFuerza\": 8, \"bonusDestreza\": 3, \"bonusSabiduria\": 6, \"bonusVitalidad\": 8, \"habilidadInnata\": \"Aliento de Fuego\", \"restricciones\": \"Solo para guerreros avanzados\"}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/v1/razas",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "v1", "razas"]
+            }
+          }
+        },
+        {
+          "name": "2.2 List All Razas",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8081/api/v1/razas",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "v1", "razas"]
+            }
+          }
+        },
+        {
+          "name": "2.3 Search Razas by Nombre",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8081/api/v1/razas?nombre=Elfico",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "v1", "razas"],
+              "query": [
+                {
+                  "key": "nombre",
+                  "value": "Elfico"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.4 Get Raza by ID (ID 1)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8081/api/v1/razas/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "v1", "razas", "1"]
+            }
+          }
+        },
+        {
+          "name": "2.5 Update Raza (Overwrite ID 1 Elfico)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\": \"Elfico Oscuro\", \"descripcion\": \"Rama oscura de los elfos, magia corrupta\", \"bonusFuerza\": 3, \"bonusDestreza\": 6, \"bonusSabiduria\": 6, \"bonusVitalidad\": 3, \"habilidadInnata\": \"Magia de las Sombras\", \"restricciones\": \"No puede aliarse con Hombres\"}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/v1/razas/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "v1", "razas", "1"]
+            }
+          }
+        },
+        {
+          "name": "2.6 Delete Raza (ID 7)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "http://localhost:8081/api/v1/razas/7",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "v1", "razas", "7"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. ms-personajes (Port 8082)",
+      "item": [
+        {
+          "name": "3.1 Create New Personaje",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\": \"Boromir\", \"razaId\": 4}"
+            },
+            "url": {
+              "raw": "http://localhost:8082/api/v1/personajes",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "v1", "personajes"]
+            }
+          }
+        },
+        {
+          "name": "3.2 List All Personajes",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8082/api/v1/personajes",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "v1", "personajes"]
+            }
+          }
+        },
+        {
+          "name": "3.3 Search Personajes by Nombre",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8082/api/v1/personajes?nombre=Aragorn",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "v1", "personajes"],
+              "query": [
+                {
+                  "key": "nombre",
+                  "value": "Aragorn"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "3.4 Get Personaje by ID (ID 4)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8082/api/v1/personajes/4",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "v1", "personajes", "4"]
+            }
+          }
+        },
+        {
+          "name": "3.5 Update Personaje (Overwrite ID 4 Aragorn)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\": \"Aragorn el Rey\", \"razaId\": 4}"
+            },
+            "url": {
+              "raw": "http://localhost:8082/api/v1/personajes/4",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "v1", "personajes", "4"]
+            }
+          }
+        },
+        {
+          "name": "3.6 Delete Personaje (ID 7)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "http://localhost:8082/api/v1/personajes/7",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8082",
+              "path": ["api", "v1", "personajes", "7"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. ms-objetos (Port 8083)",
+      "item": [
+        {
+          "name": "4.1 Create New Objeto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\": \"Arco Élfico de Galadriel\", \"tipo\": \"ARMA\", \"rareza\": \"LEGENDARIO\", \"bonusFuerza\": 0, \"bonusDestreza\": 10, \"bonusSabiduria\": 3, \"bonusVida\": 0, \"nivelMinimo\": 8, \"razaRequerida\": \"ELFICO\", \"peso\": 2, \"descripcion\": \"Arco forjado en Lothlórien, preciso como la luz\"}"
+            },
+            "url": {
+              "raw": "http://localhost:8083/api/v1/objetos",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["api", "v1", "objetos"]
+            }
+          }
+        },
+        {
+          "name": "4.2 List All Objetos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8083/api/v1/objetos",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["api", "v1", "objetos"]
+            }
+          }
+        },
+        {
+          "name": "4.3 Get Objeto by ID (ID 1)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8083/api/v1/objetos/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["api", "v1", "objetos", "1"]
+            }
+          }
+        },
+        {
+          "name": "4.4 Filter Objetos by Type (ARMA)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8083/api/v1/objetos/tipo/ARMA",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["api", "v1", "objetos", "tipo", "ARMA"]
+            }
+          }
+        },
+        {
+          "name": "4.5 Filter Objetos by Nivel Minimo (5)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8083/api/v1/objetos/nivel/5",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["api", "v1", "objetos", "nivel", "5"]
+            }
+          }
+        },
+        {
+          "name": "4.6 Update Objeto (Overwrite ID 1 Glamdring)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\": \"Glamdring Fortalecida\", \"tipo\": \"ARMA\", \"rareza\": \"LEGENDARIO\", \"bonusFuerza\": 5, \"bonusDestreza\": 3, \"bonusSabiduria\": 2, \"bonusVida\": 0, \"nivelMinimo\": 10, \"razaRequerida\": \"ELFICO\", \"peso\": 5, \"descripcion\": \"La espada de Gandalf el Gris, reforjada\"}"
+            },
+            "url": {
+              "raw": "http://localhost:8083/api/v1/objetos/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["api", "v1", "objetos", "1"]
+            }
+          }
+        },
+        {
+          "name": "4.7 Delete Objeto (ID 7)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "http://localhost:8083/api/v1/objetos/7",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["api", "v1", "objetos", "7"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. ms-inventario (Port 8084) [REQUIRES JWT]",
+      "item": [
+        {
+          "name": "5.1 Add Objeto to Inventario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"personajeId\": 1, \"objetoId\": 7}"
+            },
+            "url": {
+              "raw": "http://localhost:8084/api/v1/inventarios",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8084",
+              "path": ["api", "v1", "inventarios"]
+            }
+          }
+        },
+        {
+          "name": "5.2 View Inventario (Personaje ID 1)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8084/api/v1/inventarios?personajeId=1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8084",
+              "path": ["api", "v1", "inventarios"],
+              "query": [
+                {
+                  "key": "personajeId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "5.3 Equipar Objeto (Personaje 1, Objeto 1)",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "http://localhost:8084/api/v1/inventarios/equipar/1/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8084",
+              "path": ["api", "v1", "inventarios", "equipar", "1", "1"]
+            }
+          }
+        },
+        {
+          "name": "5.4 Desequipar Objeto (Personaje 1, Objeto 1)",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "http://localhost:8084/api/v1/inventarios/desequipar/1/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8084",
+              "path": ["api", "v1", "inventarios", "desequipar", "1", "1"]
+            }
+          }
+        },
+        {
+          "name": "5.5 Delete from Inventario (Personaje 1, Objeto 7)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "http://localhost:8084/api/v1/inventarios/1/7",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8084",
+              "path": ["api", "v1", "inventarios", "1", "7"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. ms-poderes (Port 8085)",
+      "item": [
+        {
+          "name": "6.1 Create New Poder",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\": \"Tiro Múltiple\", \"descripcion\": \"Dispara tres flechas simultáneas a diferentes enemigos\", \"tipoRaza\": \"Elfico\", \"nivelRequerido\": 5, \"danio\": 60, \"costoMana\": 35, \"tipoPoder\": \"ATAQUE\"}"
+            },
+            "url": {
+              "raw": "http://localhost:8085/api/v1/poderes",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8085",
+              "path": ["api", "v1", "poderes"]
+            }
+          }
+        },
+        {
+          "name": "6.2 List All Poderes",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8085/api/v1/poderes",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8085",
+              "path": ["api", "v1", "poderes"]
+            }
+          }
+        },
+        {
+          "name": "6.3 Filter Poderes by Raza (Elfico)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8085/api/v1/poderes?raza=Elfico",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8085",
+              "path": ["api", "v1", "poderes"],
+              "query": [
+                {
+                  "key": "raza",
+                  "value": "Elfico"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "6.4 Filter Poderes by Nivel (3)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8085/api/v1/poderes?nivel=3",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8085",
+              "path": ["api", "v1", "poderes"],
+              "query": [
+                {
+                  "key": "nivel",
+                  "value": "3"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "6.5 Get Poder by ID (ID 1)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8085/api/v1/poderes/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8085",
+              "path": ["api", "v1", "poderes", "1"]
+            }
+          }
+        },
+        {
+          "name": "6.6 Update Poder (Overwrite ID 1)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\": \"Vision del Bosque Ancestral\", \"descripcion\": \"Percepción expandida, detecta enemigos a gran distancia\", \"tipoRaza\": \"Elfico\", \"nivelRequerido\": 2, \"danio\": 10, \"costoMana\": 15, \"tipoPoder\": \"SOPORTE\"}"
+            },
+            "url": {
+              "raw": "http://localhost:8085/api/v1/poderes/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8085",
+              "path": ["api", "v1", "poderes", "1"]
+            }
+          }
+        },
+        {
+          "name": "6.7 Delete Poder (ID 7)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "http://localhost:8085/api/v1/poderes/7",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8085",
+              "path": ["api", "v1", "poderes", "7"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. ms-regiones (Port 8086)",
+      "item": [
+        {
+          "name": "7.1 Create New Region",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\": \"Fangorn\", \"descripcion\": \"Bosque antiguo habitado por los Ents\", \"lore\": \"El bosque más viejo de la Tierra Media, guardado por Bárbol\", \"nivelPeligro\": 20, \"nivelMinimoAcceso\": 4, \"tipo\": \"BOSQUE\", \"disponible\": true}"
+            },
+            "url": {
+              "raw": "http://localhost:8086/api/v1/regiones",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8086",
+              "path": ["api", "v1", "regiones"]
+            }
+          }
+        },
+        {
+          "name": "7.2 List All Regiones",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8086/api/v1/regiones",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8086",
+              "path": ["api", "v1", "regiones"]
+            }
+          }
+        },
+        {
+          "name": "7.3 Get Region by ID (ID 1)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8086/api/v1/regiones/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8086",
+              "path": ["api", "v1", "regiones", "1"]
+            }
+          }
+        },
+        {
+          "name": "7.4 List Available Regiones",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8086/api/v1/regiones/disponibles",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8086",
+              "path": ["api", "v1", "regiones", "disponibles"]
+            }
+          }
+        },
+        {
+          "name": "7.5 Filter Regiones by Nivel Peligro (2)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8086/api/v1/regiones/nivel/2",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8086",
+              "path": ["api", "v1", "regiones", "nivel", "2"]
+            }
+          }
+        },
+        {
+          "name": "7.6 Filter Regiones by Type (BOSQUE)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8086/api/v1/regiones/tipo/BOSQUE",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8086",
+              "path": ["api", "v1", "regiones", "tipo", "BOSQUE"]
+            }
+          }
+        },
+        {
+          "name": "7.7 Check Access (Region 1, Character Level 1)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8086/api/v1/regiones/1/acceso/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8086",
+              "path": ["api", "v1", "regiones", "1", "acceso", "1"]
+            }
+          }
+        },
+        {
+          "name": "7.8 Update Region (Overwrite ID 1 Rivendell)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\": \"Rivendell, Valle Eterno\", \"descripcion\": \"Refugio élfico, hogar de Elrond y los Altos Elfos\", \"lore\": \"Última Morada Amigable al Este del Mar\", \"nivelPeligro\": 3, \"nivelMinimoAcceso\": 1, \"tipo\": \"BOSQUE\", \"disponible\": true}"
+            },
+            "url": {
+              "raw": "http://localhost:8086/api/v1/regiones/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8086",
+              "path": ["api", "v1", "regiones", "1"]
+            }
+          }
+        },
+        {
+          "name": "7.9 Delete Region (ID 7)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "http://localhost:8086/api/v1/regiones/7",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8086",
+              "path": ["api", "v1", "regiones", "7"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. ms-combate (Port 8087) [REQUIRES JWT]",
+      "item": [
+        {
+          "name": "8.1 Initiate Battle",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"personajeId\": 4, \"nombreEnemigo\": \"Saruman\", \"tipoEnemigo\": \"JEFE\", \"poderUsado\": \"Adaptabilidad\", \"regionId\": 4}"
+            },
+            "url": {
+              "raw": "http://localhost:8087/api/v1/combates",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8087",
+              "path": ["api", "v1", "combates"]
+            }
+          }
+        },
+        {
+          "name": "8.2 View Battles (Personaje ID 4)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8087/api/v1/combates?personajeId=4",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8087",
+              "path": ["api", "v1", "combates"],
+              "query": [
+                {
+                  "key": "personajeId",
+                  "value": "4"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "8.3 View Victories (Personaje ID 1)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8087/api/v1/combates/victorias?personajeId=1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8087",
+              "path": ["api", "v1", "combates", "victorias"],
+              "query": [
+                {
+                  "key": "personajeId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "8.4 Total Victories Count (Personaje ID 1)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8087/api/v1/combates/victorias/total?personajeId=1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8087",
+              "path": ["api", "v1", "combates", "victorias", "total"],
+              "query": [
+                {
+                  "key": "personajeId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. ms-misiones (Port 8088)",
+      "item": [
+        {
+          "name": "9.1 Create New Mision",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\": \"La Batalla de los Cinco Ejércitos\", \"descripcion\": \"Defender Erebor de los ejércitos de Azog\", \"nivelRequerido\": 12, \"recompensaXp\": 1500, \"recompensaOro\": 750, \"dificultad\": \"LEGENDARIA\"}"
+            },
+            "url": {
+              "raw": "http://localhost:8088/api/v1/misiones",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8088",
+              "path": ["api", "v1", "misiones"]
+            }
+          }
+        },
+        {
+          "name": "9.2 List All Misiones",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8088/api/v1/misiones",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8088",
+              "path": ["api", "v1", "misiones"]
+            }
+          }
+        },
+        {
+          "name": "9.3 Get Mision by ID (ID 1)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8088/api/v1/misiones/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8088",
+              "path": ["api", "v1", "misiones", "1"]
+            }
+          }
+        },
+        {
+          "name": "9.4 Filter Misiones by Nivel (1)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8088/api/v1/misiones?nivel=1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8088",
+              "path": ["api", "v1", "misiones"],
+              "query": [
+                {
+                  "key": "nivel",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "9.5 Filter Misiones by Dificultad (FACIL)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8088/api/v1/misiones?dificultad=FACIL",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8088",
+              "path": ["api", "v1", "misiones"],
+              "query": [
+                {
+                  "key": "dificultad",
+                  "value": "FACIL"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "9.6 Update Mision (Overwrite ID 1)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\": \"Patrulla de la Comarca Avanzada\", \"descripcion\": \"Misión de patrulla extendida por toda la Comarca\", \"nivelRequerido\": 2, \"recompensaXp\": 150, \"recompensaOro\": 75, \"dificultad\": \"FACIL\"}"
+            },
+            "url": {
+              "raw": "http://localhost:8088/api/v1/misiones/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8088",
+              "path": ["api", "v1", "misiones", "1"]
+            }
+          }
+        },
+        {
+          "name": "9.7 Complete Mision (ID 1, Aragorn)",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "http://localhost:8088/api/v1/misiones/1/completar?personajeId=4&nombrePersonaje=Aragorn%20el%20Rey",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8088",
+              "path": ["api", "v1", "misiones", "1", "completar"],
+              "query": [
+                {
+                  "key": "personajeId",
+                  "value": "4"
+                },
+                {
+                  "key": "nombrePersonaje",
+                  "value": "Aragorn el Rey"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "9.8 Delete Mision (ID 7)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "http://localhost:8088/api/v1/misiones/7",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8088",
+              "path": ["api", "v1", "misiones", "7"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. ms-gremios (Port 8089)",
+      "item": [
+        {
+          "name": "10.1 Create New Gremio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\": \"Los Exploradores de Mirkwood\", \"descripcion\": \"Gremio élfico especializado en exploración y sigilo\", \"guardianId\": 1}"
+            },
+            "url": {
+              "raw": "http://localhost:8089/api/v1/gremios",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8089",
+              "path": ["api", "v1", "gremios"]
+            }
+          }
+        },
+        {
+          "name": "10.2 List All Gremios",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8089/api/v1/gremios",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8089",
+              "path": ["api", "v1", "gremios"]
+            }
+          }
+        },
+        {
+          "name": "10.3 Get Gremio by ID (ID 1)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8089/api/v1/gremios/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8089",
+              "path": ["api", "v1", "gremios", "1"]
+            }
+          }
+        },
+        {
+          "name": "10.4 Update Gremio (Overwrite ID 1)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\": \"La Gran Orden del Anillo\", \"descripcion\": \"La hermandad más poderosa de la Tierra Media, guardianes del anillo\", \"guardianId\": 1}"
+            },
+            "url": {
+              "raw": "http://localhost:8089/api/v1/gremios/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8089",
+              "path": ["api", "v1", "gremios", "1"]
+            }
+          }
+        },
+        {
+          "name": "10.5 Add Treasure (ID 1, oro=250)",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "http://localhost:8089/api/v1/gremios/1/tesoro?oro=250",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8089",
+              "path": ["api", "v1", "gremios", "1", "tesoro"],
+              "query": [
+                {
+                  "key": "oro",
+                  "value": "250"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "10.6 Disband Gremio (ID 6)",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "http://localhost:8089/api/v1/gremios/6/disolver",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8089",
+              "path": ["api", "v1", "gremios", "6", "disolver"]
+            }
+          }
+        },
+        {
+          "name": "10.7 Delete Gremio (ID 7)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "http://localhost:8089/api/v1/gremios/7",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8089",
+              "path": ["api", "v1", "gremios", "7"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "11. ms-historial (Port 8090)",
+      "item": [
+        {
+          "name": "11.1 Create New Event",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"personajeId\": 4, \"tipo\": \"BATALLA\", \"descripcion\": \"Aragorn derroto a Saruman en combate épico\", \"referenciaId\": 7, \"nombrePersonaje\": \"Aragorn el Rey\", \"detalles\": \"Batalla en Minas Tirith, victoria decisiva\"}"
+            },
+            "url": {
+              "raw": "http://localhost:8090/api/v1/eventos",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8090",
+              "path": ["api", "v1", "eventos"]
+            }
+          }
+        },
+        {
+          "name": "11.2 List All Events",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8090/api/v1/eventos",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8090",
+              "path": ["api", "v1", "eventos"]
+            }
+          }
+        },
+        {
+          "name": "11.3 Filter Events by Personaje (ID 4)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8090/api/v1/eventos?personajeId=4",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8090",
+              "path": ["api", "v1", "eventos"],
+              "query": [
+                {
+                  "key": "personajeId",
+                  "value": "4"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "11.4 Filter Events by Type (BATALLA)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8090/api/v1/eventos?tipo=BATALLA",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8090",
+              "path": ["api", "v1", "eventos"],
+              "query": [
+                {
+                  "key": "tipo",
+                  "value": "BATALLA"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "11.5 List All Battles",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8090/api/v1/eventos/batallas",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8090",
+              "path": ["api", "v1", "eventos", "batallas"]
+            }
+          }
+        },
+        {
+          "name": "11.6 Count Events (Personaje 1, BATALLA)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8090/api/v1/eventos/total?personajeId=1&tipo=BATALLA",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8090",
+              "path": ["api", "v1", "eventos", "total"],
+              "query": [
+                {
+                  "key": "personajeId",
+                  "value": "1"
+                },
+                {
+                  "key": "tipo",
+                  "value": "BATALLA"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

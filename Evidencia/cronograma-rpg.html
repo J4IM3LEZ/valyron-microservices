@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Cronograma RPG — Javier & Jose</title>
+<style>
+  :root {
+    --javier: #3B4FD4;
+    --javier-light: #E8ECFF;
+    --javier-mid: #8A96E8;
+    --jose: #0F8A5F;
+    --jose-light: #E0F5EC;
+    --jose-mid: #5DC4A0;
+    --merge: #B45309;
+    --merge-light: #FEF3C7;
+    --bg: #F9F8F5;
+    --card: #FFFFFF;
+    --border: #E5E2D9;
+    --text: #1A1917;
+    --text2: #6B6860;
+    --text3: #A09E99;
+    --radius: 10px;
+  }
+  @media(prefers-color-scheme:dark){
+    :root{
+      --bg:#18181A; --card:#222226; --border:#333338;
+      --text:#F0EEE8; --text2:#9B9992; --text3:#5C5B57;
+      --javier-light:#1A2060; --jose-light:#0B3528; --merge-light:#3D2800;
+    }
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;font-size:14px;line-height:1.6;padding:24px 16px 48px}
+  h1{font-size:22px;font-weight:600;margin-bottom:4px}
+  .subtitle{color:var(--text2);font-size:13px;margin-bottom:28px}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+  .leg{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)}
+  .leg-dot{width:10px;height:10px;border-radius:50%}
+  /* Tab nav */
+  .tabs{display:flex;gap:6px;margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:0}
+  .tab{padding:8px 18px;border-radius:8px 8px 0 0;font-size:13px;font-weight:500;cursor:pointer;border:1px solid transparent;border-bottom:none;color:var(--text2);transition:all .15s;position:relative;bottom:-1px}
+  .tab.active{background:var(--card);border-color:var(--border);color:var(--text)}
+  .tab-content{display:none}
+  .tab-content.active{display:block}
+  /* Etapa block */
+  .etapa{margin-bottom:32px}
+  .etapa-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .etapa-badge{padding:3px 12px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.03em}
+  .etapa-title{font-size:16px;font-weight:600}
+  .etapa-weeks{font-size:12px;color:var(--text3);margin-left:auto}
+  /* Dev columns */
+  .dev-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:640px){.dev-cols{grid-template-columns:1fr}}
+  .dev-col{border-radius:var(--radius);border:1px solid var(--border);overflow:hidden}
+  .dev-col-header{padding:10px 14px;font-size:12px;font-weight:600;letter-spacing:.04em;display:flex;align-items:center;gap:7px}
+  .dev-col-header .avatar{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+  .task-item{padding:9px 14px;border-top:1px solid var(--border);display:flex;align-items:flex-start;gap:8px;cursor:pointer;transition:background .12s}
+  .task-item:hover{background:var(--bg)}
+  .task-item.done{opacity:.45}
+  .task-item.done .cb{background:var(--jose);border-color:var(--jose)}
+  .task-item.done .cb::after{content:'';display:block;width:6px;height:4px;border-left:1.5px solid #fff;border-bottom:1.5px solid #fff;transform:rotate(-45deg) translateY(-1px)}
+  .cb{width:15px;height:15px;border-radius:3px;border:1.5px solid var(--border);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center}
+  .task-text{font-size:13px;color:var(--text);flex:1}
+  .task-tag{display:inline-block;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:4px;font-weight:500}
+  /* Merge row */
+  .merge-row{margin:16px 0 8px;background:var(--merge-light);border:1px solid #D9A520;border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:10px}
+  .merge-icon{font-size:18px}
+  .merge-body{}
+  .merge-title{font-size:13px;font-weight:600;color:var(--merge)}
+  .merge-steps{font-size:12px;color:var(--text2);margin-top:3px}
+  /* Stats bar */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:24px}
+  @media(max-width:480px){.stats{grid-template-columns:repeat(2,1fr)}}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px}
+  .stat-n{font-size:22px;font-weight:600}
+  .stat-l{font-size:11px;color:var(--text2)}
+  .prog-wrap{height:4px;background:var(--border);border-radius:2px;margin-top:20px}
+  .prog-fill{height:4px;border-radius:2px;background:var(--javier);transition:width .4s}
+  /* Timeline view */
+  .timeline{position:relative;padding-left:28px}
+  .timeline::before{content:'';position:absolute;left:9px;top:4px;bottom:4px;width:1.5px;background:var(--border)}
+  .tl-item{position:relative;margin-bottom:20px}
+  .tl-dot{position:absolute;left:-25px;top:4px;width:12px;height:12px;border-radius:50%;border:2px solid var(--card)}
+  .tl-week{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:.05em;margin-bottom:4px}
+  .tl-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  @media(max-width:600px){.tl-cards{grid-template-columns:1fr}}
+  .tl-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 12px;border-left:3px solid transparent}
+  .tl-card.j{border-left-color:var(--javier)}
+  .tl-card.jo{border-left-color:var(--jose)}
+  .tl-card.m{border-left-color:var(--merge);background:var(--merge-light)}
+  .tl-who{font-size:10px;font-weight:600;letter-spacing:.05em;margin-bottom:3px}
+  .tl-tasks{font-size:12px;color:var(--text2)}
+  .reset{font-size:12px;color:var(--text3);border:1px solid var(--border);background:none;border-radius:6px;padding:4px 10px;cursor:pointer;margin-top:8px}
+  .reset:hover{background:var(--card)}
+  code{font-family:monospace;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:12px}
+</style>
+</head>
+<body>
+
+<h1>⚔️ Cronograma — Chronicle of Realms</h1>
+<p class="subtitle">Distribución de trabajo · Javier &amp; Jose · Spring Boot Microservicios RPG</p>
+
+<div class="stats">
+  <div class="stat"><div class="stat-n" id="s-done" style="color:var(--javier)">0</div><div class="stat-l">tareas hechas</div></div>
+  <div class="stat"><div class="stat-n" id="s-total">0</div><div class="stat-l">tareas totales</div></div>
+  <div class="stat"><div class="stat-n" id="s-pct">0%</div><div class="stat-l">avance</div></div>
+  <div class="stat"><div class="stat-n" id="s-merge">10/10</div><div class="stat-l">merges a main</div></div>
+</div>
+<div class="prog-wrap"><div class="prog-fill" id="pbar" style="width:0%"></div></div>
+
+<div class="legend" style="margin-top:14px">
+  <div class="leg"><div class="leg-dot" style="background:var(--javier)"></div>developer-javier/</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--jose)"></div>developer-jose/</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--merge)"></div>Merge → main</div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('etapas',this)">Por etapas</div>
+  <div class="tab" onclick="showTab('timeline',this)">Línea de tiempo</div>
+  <div class="tab" onclick="showTab('sql',this)">Scripts SQL</div>
+  <div class="tab" onclick="showTab('git',this)">Guía Git</div>
+</div>
+
+<!-- ===== TAB ETAPAS ===== -->
+<div class="tab-content active" id="tab-etapas">
+
+  <!-- ETAPA 1 -->
+  <div class="etapa">
+    <div class="etapa-header">
+      <span class="etapa-badge" style="background:#EEEDFE;color:#3C3489">ETAPA 1</span>
+      <span class="etapa-title">Auth + Razas + Personajes</span>
+      <span class="etapa-weeks">Semanas 1–3</span>
+    </div>
+    <div class="dev-cols">
+      <div class="dev-col">
+        <div class="dev-col-header" style="background:var(--javier-light)">
+          <div class="avatar" style="background:var(--javier)">JV</div>
+          <span style="color:var(--javier)">developer-javier/</span>
+        </div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Configurar Eureka Server en puerto :8761 <span class="task-tag" style="background:var(--javier-light);color:var(--javier)">gateway</span></span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Crear módulo <code>ms-auth</code> con puerto :8080</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Entidad <code>Usuario</code> + <code>Rol</code> con JPA y Lombok</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">BCrypt en registro — nunca guardar contraseña plana</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Login → generar token JWT con Spring Security</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Validaciones: @NotBlank, @Email, @Size en DTOs</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Endpoints: POST /auth/register · POST /auth/login</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Crear schema <code>auth_db</code> en MySQL</span></div>
+      </div>
+      <div class="dev-col">
+        <div class="dev-col-header" style="background:var(--jose-light)">
+          <div class="avatar" style="background:var(--jose)">JO</div>
+          <span style="color:var(--jose)">developer-jose/</span>
+        </div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Crear módulo <code>ms-razas</code> en puerto :8081</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Entidad <code>Raza</code>: nombre, bono fuerza, bono destreza, bono sabiduría, habilidades innatas</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">CRUD completo de razas con Spring Data JPA</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Crear módulo <code>ms-personajes</code> en puerto :8082</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Entidad <code>Personaje</code>: nombre, nivel, XP, stats base + bono raza</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">WebClient: al crear personaje llamar a ms-razas para aplicar bonos</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Endpoints: POST /personajes/crear · GET /personajes/{id} · PUT /personajes/subir-nivel</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Schemas <code>razas_db</code> y <code>personajes_db</code> en MySQL</span></div>
+      </div>
+    </div>
+    <div class="merge-row">
+      <span class="merge-icon">🔀</span>
+      <div class="merge-body">
+        <div class="merge-title">MERGE 1 → main (fin semana 3)</div>
+        <div class="merge-steps">Javier sube developer-javier/ → PR → Jose revisa → merge a main · Jose sube developer-jose/ → PR → Javier revisa → merge a main · Ambos hacen <code>git pull origin main</code> y actualizan sus ramas</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ETAPA 2 -->
+  <div class="etapa">
+    <div class="etapa-header">
+      <span class="etapa-badge" style="background:#E1F5EE;color:#085041">ETAPA 2</span>
+      <span class="etapa-title">Objetos + Inventario + Poderes</span>
+      <span class="etapa-weeks">Semanas 4–6</span>
+    </div>
+    <div class="dev-cols">
+      <div class="dev-col">
+        <div class="dev-col-header" style="background:var(--javier-light)">
+          <div class="avatar" style="background:var(--javier)">JV</div>
+          <span style="color:var(--javier)">developer-javier/</span>
+        </div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Módulo <code>ms-objetos</code> en puerto :8083</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Entidad <code>Objeto</code>: nombre, tipo (arma/armadura/poción), rareza, stats, nivel mínimo, raza requerida</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">CRUD completo — solo rol Maestro puede crear/editar objetos</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Filtro JWT heredado desde ms-auth — validar token en cada request</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Módulo <code>ms-inventario</code> en puerto :8084</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">WebClient: al equipar objeto, consultar ms-objetos para validar nivel y raza</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Regla de negocio: peso máximo por personaje (Validation)</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Schemas <code>objetos_db</code> e <code>inventario_db</code></span></div>
+      </div>
+      <div class="dev-col">
+        <div class="dev-col-header" style="background:var(--jose-light)">
+          <div class="avatar" style="background:var(--jose)">JO</div>
+          <span style="color:var(--jose)">developer-jose/</span>
+        </div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Módulo <code>ms-poderes</code> en puerto :8085</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Entidad <code>Poder</code>: nombre, tipo (magia/física), costo mana, nivel requerido, raza requerida</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">CRUD de poderes — solo Maestro del Reino</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">GET /poderes/disponibles/{personajeId} — WebClient consulta ms-personajes para filtrar por nivel y raza</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">POST /poderes/aprender — validar que el personaje cumple los requisitos</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Regla: un Orco no puede aprender poderes élficos (@Validated)</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Schema <code>poderes_db</code></span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Agregar filtro JWT a ms-personajes y ms-razas (coordinado con Javier)</span></div>
+      </div>
+    </div>
+    <div class="merge-row">
+      <span class="merge-icon">🔀</span>
+      <div class="merge-body">
+        <div class="merge-title">MERGE 2 → main (fin semana 6)</div>
+        <div class="merge-steps">Mismo proceso: PR de cada rama → revisión cruzada → merge a main · Verificar que ms-inventario y ms-poderes se comunican con ms-personajes correctamente en el merge</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ETAPA 3 -->
+  <div class="etapa">
+    <div class="etapa-header">
+      <span class="etapa-badge" style="background:#FAEEDA;color:#633806">ETAPA 3</span>
+      <span class="etapa-title">Misiones + Combate + Regiones + Gremios</span>
+      <span class="etapa-weeks">Semanas 7–9</span>
+    </div>
+    <div class="dev-cols">
+      <div class="dev-col">
+        <div class="dev-col-header" style="background:var(--javier-light)">
+          <div class="avatar" style="background:var(--javier)">JV</div>
+          <span style="color:var(--javier)">developer-javier/</span>
+        </div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Módulo <code>ms-regiones</code> en puerto :8086</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Entidad <code>Region</code>: nombre, nivel de peligro, descripción lore, misiones disponibles</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Regla: personaje debe tener nivel >= peligro de la región para acceder</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Módulo <code>ms-combate</code> en puerto :8087</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Entidad <code>Batalla</code>: personajeId, enemigo, resultado, daño infligido, timestamp</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">WebClient: traer stats desde ms-personajes y poder activo desde ms-poderes</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Motor de daño: fuerza + bono arma + poder seleccionado</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Schemas <code>regiones_db</code> y <code>combate_db</code></span></div>
+      </div>
+      <div class="dev-col">
+        <div class="dev-col-header" style="background:var(--jose-light)">
+          <div class="avatar" style="background:var(--jose)">JO</div>
+          <span style="color:var(--jose)">developer-jose/</span>
+        </div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Módulo <code>ms-misiones</code> en puerto :8088</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Entidad <code>Mision</code>: título, descripción, XP recompensa, nivel mínimo, estado (PENDIENTE/ACTIVA/COMPLETADA)</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">POST /misiones/aceptar — WebClient valida nivel en ms-personajes</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">POST /misiones/completar — WebClient suma XP en ms-personajes</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Módulo <code>ms-gremios</code> en puerto :8089</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Entidad <code>Gremio</code>: nombre, descripción, fondos de oro, lista de miembros</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Rol Guardián del Gremio — puede invitar/expulsar miembros</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Schemas <code>misiones_db</code> y <code>gremios_db</code></span></div>
+      </div>
+    </div>
+    <div class="merge-row">
+      <span class="merge-icon">🔀</span>
+      <div class="merge-body">
+        <div class="merge-title">MERGE 3 → main (fin semana 9)</div>
+        <div class="merge-steps">PR de cada rama → revisión cruzada → merge · Prueba de integración completa: flujo aventurero desde login → crear personaje → aceptar misión → combatir → completar misión · Verificar flujo de XP entre ms-misiones y ms-personajes</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ETAPA 4 -->
+  <div class="etapa">
+    <div class="etapa-header">
+      <span class="etapa-badge" style="background:#E6F1FB;color:#0C447C">ETAPA 4</span>
+      <span class="etapa-title">Historial + Tests + Documentación + Despliegue</span>
+      <span class="etapa-weeks">Semanas 10–12</span>
+    </div>
+    <div class="dev-cols">
+      <div class="dev-col">
+        <div class="dev-col-header" style="background:var(--javier-light)">
+          <div class="avatar" style="background:var(--javier)">JV</div>
+          <span style="color:var(--javier)">developer-javier/</span>
+        </div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Módulo <code>ms-historial</code> en puerto :8090</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Entidad <code>Evento</code>: tipo, personajeId, descripción, timestamp</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Recibir eventos desde ms-combate y ms-misiones vía WebClient</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Tests unitarios con JUnit + Mockito: motor de combate y lógica de poderes</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Tests de endpoint de login con MockMvc</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Swagger / SpringDoc en todos los microservicios de su rama</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Despliegue con ngrok o Railway y URL pública disponible</span></div>
+      </div>
+      <div class="dev-col">
+        <div class="dev-col-header" style="background:var(--jose-light)">
+          <div class="avatar" style="background:var(--jose)">JO</div>
+          <span style="color:var(--jose)">developer-jose/</span>
+        </div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Tests de repositorio @DataJpaTest en ms-personajes y ms-misiones</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Tests de validación: raza incorrecta, nivel insuficiente, peso excedido</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Swagger / SpringDoc en ms-razas, ms-personajes, ms-poderes, ms-misiones y ms-gremios</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">README.md con instrucciones de ejecución por microservicio</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Diagramas ER finales de las bases de datos de su rama</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Diagrama de arquitectura actualizado (puertos + relaciones WebClient)</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Revisión final: verificar que ningún microservicio comparte tablas</span></div>
+      </div>
+    </div>
+    <div class="merge-row">
+      <span class="merge-icon">🏆</span>
+      <div class="merge-body">
+        <div class="merge-title">MERGE 4 FINAL → main (semana 12)</div>
+        <div class="merge-steps">Merge final de ambas ramas · Verificar historial de commits de ambos desarrolladores · Demo completa: aventurero desde registro hasta batalla · Entrega del repositorio con documentación</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ETAPA 5 -->
+  <div class="etapa">
+    <div class="etapa-header">
+      <span class="etapa-badge" style="background:#F3E8FF;color:#6D28D9">ETAPA 5</span>
+      <span class="etapa-title">Documentación REST + Navegación HATEOAS</span>
+      <span class="etapa-weeks">Jun 18–19, 2026</span>
+    </div>
+    <div class="dev-cols">
+      <div class="dev-col">
+        <div class="dev-col-header" style="background:var(--javier-light)">
+          <div class="avatar" style="background:var(--javier)">JV</div>
+          <span style="color:var(--javier)">developer-javier/</span>
+        </div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Agregar dependencia <code>springdoc-openapi-starter-webmvc-ui</code> 2.8.5 en todos los ms</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Configurar Swagger UI en cada microservicio — endpoints auto-documentados</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Aplicar buenas prácticas REST: @RestController, status codes correctos (201 CREATE, 204 NO_CONTENT)</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">OpenApiConfig en cada ms para personalizar título, versión y descripción del API</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Verificar que Swagger UI está disponible en http://localhost:puerto/swagger-ui.html</span></div>
+      </div>
+      <div class="dev-col">
+        <div class="dev-col-header" style="background:var(--jose-light)">
+          <div class="avatar" style="background:var(--jose)">JO</div>
+          <span style="color:var(--jose)">developer-jose/</span>
+        </div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Agregar dependencia <code>spring-boot-starter-hateoas</code></span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Crear <code>RazaModelAssembler</code> — convertir Raza a EntityModel con links (self, collection)</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Crear <code>PersonajeModelAssembler</code> — links a races, inventory, missions</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Crear <code>MisionModelAssembler</code> — links a personaje, historial, rewards</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Retornar EntityModel en controllers — facilita navegación entre recursos</span></div>
+      </div>
+    </div>
+    <div class="merge-row">
+      <span class="merge-icon">🔀</span>
+      <div class="merge-body">
+        <div class="merge-title">MERGE 5 → main (Jun 19, 2026)</div>
+        <div class="merge-steps">PR cruzadas — Swagger visible en todos los ms · HATEOAS funcionando · Todos los endpoints documentados con ejemplos</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ETAPA 6 -->
+  <div class="etapa">
+    <div class="etapa-header">
+      <span class="etapa-badge" style="background:#E5E7EB;color:#374151">ETAPA 6</span>
+      <span class="etapa-title">Docker + MySQL + Tests de Integración</span>
+      <span class="etapa-weeks">Jun 20–21, 2026</span>
+    </div>
+    <div class="dev-cols">
+      <div class="dev-col">
+        <div class="dev-col-header" style="background:var(--javier-light)">
+          <div class="avatar" style="background:var(--javier)">JV</div>
+          <span style="color:var(--javier)">developer-javier/</span>
+        </div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Levantar MySQL 8.0 en Docker: <code>docker run --name mysql-valyron -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -p 3306:3306 -d mysql:8.0</code></span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Crear Dockerfile multi-stage para cada ms — JDK alpine (compile) → JRE alpine (runtime minimizado)</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Crear <code>docker-compose.yml</code> con 13 servicios (eureka-server + 12 microservicios)</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Configurar env vars: DATASOURCE_URL con <code>host.docker.internal:3306</code> + createDatabaseIfNotExist</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Healthcheck en Eureka — <code>depends_on</code> en todos los ms, <code>restart: on-failure</code></span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Ejecutar: <code>docker compose up --build</code> — todos los 13 servicios levantándose automáticamente</span></div>
+      </div>
+      <div class="dev-col">
+        <div class="dev-col-header" style="background:var(--jose-light)">
+          <div class="avatar" style="background:var(--jose)">JO</div>
+          <span style="color:var(--jose)">developer-jose/</span>
+        </div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Agregar H2 Database en <code>test</code> scope (pom.xml)</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Crear <code>application-test.yml</code> — H2 en memoria, puerto 0, Eureka disabled</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Migrar properties a YAML en todos los ms — application.yml, application-dev.yml, application-test.yml</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Agregar SpringBootTest (@SpringBootTest + @ActiveProfiles("test")) en ms-razas, ms-personajes, ms-misiones</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Tests de servicio con Mockito — validar lógica sin tocar BD real</span></div>
+        <div class="task-item" onclick="toggle(this)"><div class="cb"></div><span class="task-text">Eliminar métodos duplicados — refactor detectado en ms-personajes</span></div>
+      </div>
+    </div>
+    <div class="merge-row">
+      <span class="merge-icon">🏆</span>
+      <div class="merge-body">
+        <div class="merge-title">MERGE FINAL 6 → main (Jun 21, 2026)</div>
+        <div class="merge-steps">Merge final · Project completo · docker compose up levanta toda la infraestructura · Todos los tests pasan · Proyecto listo para entrega educativa</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="reset" onclick="resetAll()">Reiniciar progreso</button>
+</div>
+
+<!-- ===== TAB TIMELINE ===== -->
+<div class="tab-content" id="tab-timeline">
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--javier)"></div>
+      <div class="tl-week">ABR 20 – MAY 12</div>
+      <div class="tl-cards">
+        <div class="tl-card j"><div class="tl-who" style="color:var(--javier)">JAVIER</div><div class="tl-tasks">Eureka Server + ms-auth completo (registro, login, JWT, BCrypt)</div></div>
+        <div class="tl-card jo"><div class="tl-who" style="color:var(--jose)">JOSE</div><div class="tl-tasks">ms-razas CRUD + ms-personajes con WebClient → razas</div></div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--merge)"></div>
+      <div class="tl-week">MAY 12–13 — MERGE 1 (PR #1, #2)</div>
+      <div class="tl-cards">
+        <div class="tl-card m" style="grid-column:1/-1"><div class="tl-who" style="color:var(--merge)">🔀 MERGE → MAIN</div><div class="tl-tasks">PR cruzados · Auth + Razas + Personajes funcionando juntos · git pull ambos</div></div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--javier)"></div>
+      <div class="tl-week">MAY 16</div>
+      <div class="tl-cards">
+        <div class="tl-card j"><div class="tl-who" style="color:var(--javier)">JAVIER</div><div class="tl-tasks">ms-objetos + ms-inventario con reglas de peso y validación de nivel por WebClient</div></div>
+        <div class="tl-card jo"><div class="tl-who" style="color:var(--jose)">JOSE</div><div class="tl-tasks">ms-poderes con reglas de raza + GET poderes disponibles por nivel</div></div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--merge)"></div>
+      <div class="tl-week">MAY 16 — MERGE 2 (PR #3, #4)</div>
+      <div class="tl-cards">
+        <div class="tl-card m" style="grid-column:1/-1"><div class="tl-who" style="color:var(--merge)">🔀 MERGE → MAIN</div><div class="tl-tasks">PR cruzados · Objetos + Inventario + Poderes integrados con Personajes</div></div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--javier)"></div>
+      <div class="tl-week">MAY 16–17</div>
+      <div class="tl-cards">
+        <div class="tl-card j"><div class="tl-who" style="color:var(--javier)">JAVIER</div><div class="tl-tasks">ms-regiones (control de acceso por nivel) + ms-combate (motor de daño con WebClient)</div></div>
+        <div class="tl-card jo"><div class="tl-who" style="color:var(--jose)">JOSE</div><div class="tl-tasks">ms-misiones (aceptar/completar + XP) + ms-gremios (roles Guardián)</div></div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--merge)"></div>
+      <div class="tl-week">MAY 17 — MERGE 3 (PR #5-8)</div>
+      <div class="tl-cards">
+        <div class="tl-card m" style="grid-column:1/-1"><div class="tl-who" style="color:var(--merge)">🔀 MERGE → MAIN</div><div class="tl-tasks">PR cruzados · Prueba de flujo completo: login → personaje → misión → combate · Verificar flujo XP</div></div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--javier)"></div>
+      <div class="tl-week">JUN 18–19</div>
+      <div class="tl-cards">
+        <div class="tl-card j"><div class="tl-who" style="color:var(--javier)">JAVIER</div><div class="tl-tasks">Swagger/OpenAPI en todos los ms con springdoc-openapi + buenas prácticas REST</div></div>
+        <div class="tl-card jo"><div class="tl-who" style="color:var(--jose)">JOSE</div><div class="tl-tasks">HATEOAS con RazaModelAssembler, PersonajeModelAssembler, MisionModelAssembler</div></div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--javier)"></div>
+      <div class="tl-week">JUN 20–21</div>
+      <div class="tl-cards">
+        <div class="tl-card j"><div class="tl-who" style="color:var(--javier)">JAVIER</div><div class="tl-tasks">Docker + MySQL 8.0 + docker-compose.yml con 13 servicios, healthchecks</div></div>
+        <div class="tl-card jo"><div class="tl-who" style="color:var(--jose)">JOSE</div><div class="tl-tasks">SpringBootTest con H2 + migración properties→YAML + test profiles</div></div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--merge)"></div>
+      <div class="tl-week">JUN 21 — ENTREGA FINAL 🏆 (PR #10)</div>
+      <div class="tl-cards">
+        <div class="tl-card m" style="grid-column:1/-1"><div class="tl-who" style="color:var(--merge)">🔀 ENTREGA FINAL → MAIN</div><div class="tl-tasks">Merge definitivo · Demo completa · URL pública funcionando · Repositorio documentado</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB SQL ===== -->
+<div class="tab-content" id="tab-sql">
+  <div style="display:flex;flex-direction:column;gap:16px;padding-top:4px">
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+      <div style="font-weight:600;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+        <span>📊 razas_db → tabla razas</span>
+        <button style="font-size:11px;padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:none;cursor:pointer" onclick="copySQL(this)">Copiar</button>
+      </div>
+      <div style="font-family:monospace;font-size:11px;background:var(--bg);border-radius:6px;padding:12px;line-height:1.6;overflow-x:auto;max-height:300px;overflow-y:auto">
+INSERT INTO razas (nombre, descripcion, bonus_fuerza, bonus_destreza, bonus_sabiduria, bonus_vitalidad, habilidad_innata, restricciones) VALUES<br>
+('Elfico', 'Seres inmortales del bosque, ágiles y sabios', 2, 5, 5, 3, 'Visión del Bosque', NULL),<br>
+('Enano', 'Guerreros de la montaña, resistentes e implacables', 5, 1, 2, 7, 'Resistencia Pétrea', NULL),<br>
+('Hobbit', 'Pequeños y sigilosos, con suerte inusual', 1, 6, 3, 2, 'Pies Silenciosos', NULL),<br>
+('Hombre', 'Versátiles y ambiciosos, dominan todos los campos', 3, 3, 3, 4, 'Adaptabilidad', NULL),<br>
+('Orco', 'Brutales guerreros de las tierras oscuras', 8, 2, 1, 6, 'Furia Berserker', 'No puede aprender magia'),<br>
+('Istari', 'Magos de poder ancestral enviados desde el más allá', 1, 2, 10, 2, 'Magia Arcana', 'Solo magia, no armas pesadas');
+      </div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+      <div style="font-weight:600;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+        <span>👤 personajes_db → tabla personajes</span>
+        <button style="font-size:11px;padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:none;cursor:pointer" onclick="copySQL(this)">Copiar</button>
+      </div>
+      <div style="font-family:monospace;font-size:11px;background:var(--bg);border-radius:6px;padding:12px;line-height:1.6;overflow-x:auto;max-height:300px;overflow-y:auto">
+INSERT INTO personajes (nombre, raza_id, nivel, experiencia, fuerza, destreza, sabiduria, vitalidad, oro, estado) VALUES<br>
+('Legolas', 1, 10, 9500, 12, 20, 15, 13, 800, 'ACTIVO'),<br>
+('Gimli', 2, 8, 7200, 18, 8, 10, 22, 650, 'ACTIVO'),<br>
+('Frodo', 3, 5, 4100, 8, 17, 12, 10, 1200, 'DESCANSANDO'),<br>
+('Aragorn', 4, 15, 18000, 18, 13, 14, 19, 2500, 'ACTIVO'),<br>
+('Uruk-Hai', 5, 7, 6300, 23, 9, 5, 21, 200, 'ACTIVO'),<br>
+('Gandalf', 6, 20, 50000, 8, 10, 30, 12, 5000, 'ACTIVO');
+      </div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+      <div style="font-weight:600;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+        <span>⚔️ objetos_db → tabla objetos</span>
+        <button style="font-size:11px;padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:none;cursor:pointer" onclick="copySQL(this)">Copiar</button>
+      </div>
+      <div style="font-family:monospace;font-size:11px;background:var(--bg);border-radius:6px;padding:12px;line-height:1.6;overflow-x:auto;max-height:300px;overflow-y:auto">
+INSERT INTO objetos (nombre, tipo, rareza, bonus_fuerza, bonus_destreza, bonus_sabiduria, bonus_vida, nivel_minimo, raza_requerida, peso, descripcion) VALUES<br>
+('Espada Larga', 'ARMA', 'COMUN', 3, 0, 0, 5, 1, 'NINGUNA', 8, 'Espada básica para aventureros'),<br>
+('Hacha de Batalla', 'ARMA', 'INUSUAL', 6, 0, 0, 8, 3, 'ENANO', 12, 'Forjada en las montañas'),<br>
+('Bastón de Roble', 'ARMA', 'RARO', 0, 2, 10, 6, 5, 'ISTARI', 4, 'Canaliza el poder arcano'),<br>
+('Armadura de Cuero', 'ARMADURA', 'COMUN', 0, 2, 0, 15, 1, 'NINGUNA', 10, 'Ligera y flexible'),<br>
+('Mithril Cota', 'ARMADURA', 'LEGENDARIO', 2, 3, 0, 40, 10, 'NINGUNA', 6, 'La armadura más liviana y resistente'),<br>
+('Poción de Vida', 'POCION', 'COMUN', 0, 0, 0, 50, 1, 'NINGUNA', 1, 'Restaura 50 puntos de vida'),<br>
+('Arco Élfico', 'ARMA', 'EPICO', 0, 8, 3, 10, 8, 'ELFICO', 3, 'Solo los elfos pueden dominarlo');
+      </div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+      <div style="font-weight:600;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+        <span>📜 misiones_db → tabla misiones</span>
+        <button style="font-size:11px;padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:none;cursor:pointer" onclick="copySQL(this)">Copiar</button>
+      </div>
+      <div style="font-family:monospace;font-size:11px;background:var(--bg);border-radius:6px;padding:12px;line-height:1.6;overflow-x:auto;max-height:300px;overflow-y:auto">
+INSERT INTO misiones (nombre, descripcion, nivel_requerido, recompensa_xp, recompensa_oro, dificultad, estado_mision) VALUES<br>
+('El Camino de las Sombras', 'Explora el bosque maldito al norte del reino', 1, 500, 100, 'FACIL', 'DISPONIBLE'),<br>
+('La Cueva del Dragón', 'Derrota al dragón que aterroriza las aldeas del sur', 5, 2000, 500, 'NORMAL', 'DISPONIBLE'),<br>
+('Rescate en Mirkwood', 'Salva a los enanos capturados por las arañas gigantes', 3, 1000, 250, 'NORMAL', 'DISPONIBLE'),<br>
+('El Señor Oscuro', 'Destruye el artefacto en las Grietas del Destino', 10, 8000, 2000, 'DIFICIL', 'DISPONIBLE'),<br>
+('La Forja Legendaria', 'Consigue los materiales para forjar el arma suprema', 15, 15000, 5000, 'LEGENDARIA', 'DISPONIBLE');
+      </div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+      <div style="font-weight:600;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+        <span>🔐 auth_db → tabla usuarios</span>
+        <button style="font-size:11px;padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:none;cursor:pointer" onclick="copySQL(this)">Copiar</button>
+      </div>
+      <div style="font-family:monospace;font-size:11px;background:var(--bg);border-radius:6px;padding:12px;line-height:1.6;overflow-x:auto;max-height:300px;overflow-y:auto">
+INSERT INTO usuarios (username, email, password, rol) VALUES<br>
+('maestro_gandalf', 'gandalf@valyron.com', '$2a$10$N.zmdr9zkoa05mgGZfLiaeOiia8P5dmq/DPFbNmq8BTGlNg23O.yq', 'MAESTRO_DEL_REINO'),<br>
+('aventurero_aragorn', 'aragorn@valyron.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDwmoohzzS7.rmNWSxb5jLnmdR3IWEmy', 'AVENTURERO'),<br>
+('guardian_legolas', 'legolas@valyron.com', '$2a$10$GRLdNijSQMUvl/au9ofL.eDwmoohzzS7.rmNWSxb5jLnmdR3IWEmy', 'GUARDIAN_DEL_GREMIO');<br>
+<span style="color:var(--text3)">-- ⚠️ Cambiar contraseñas en producción — estas son solo para desarrollo</span>
+      </div>
+    </div>
+
+    <div style="background:var(--merge-light);border:1px solid #D9A520;border-radius:var(--radius);padding:16px">
+      <div style="font-weight:600;margin-bottom:8px;color:var(--merge)">ℹ️ Orden de ejecución recomendado</div>
+      <div style="font-size:13px;color:var(--text2);line-height:2">
+        1. <code>razas_db</code> (sin dependencias)<br>
+        2. <code>auth_db</code> (sin dependencias)<br>
+        3. <code>objetos_db</code> (sin dependencias)<br>
+        4. <code>misiones_db</code> (sin dependencias)<br>
+        5. <code>personajes_db</code> (depende de razaId de razas_db)<br><br>
+        <strong>Nota:</strong> Las contraseñas son hashes BCrypt. Para desarrollo:<br>
+        maestro_gandalf / admin123 | aventurero_aragorn / user123 | guardian_legolas / user123
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== TAB GIT ===== -->
+<div class="tab-content" id="tab-git">
+  <div style="display:flex;flex-direction:column;gap:14px;padding-top:4px">
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+      <div style="font-weight:600;margin-bottom:10px">🚀 Setup inicial (una sola vez)</div>
+      <div style="font-family:monospace;font-size:12px;background:var(--bg);border-radius:6px;padding:12px;line-height:2;overflow-x:auto">
+        <span style="color:var(--text3)"># Javier clona y crea su rama</span><br>
+        git clone https://github.com/tuusuario/chronicle-of-realms<br>
+        git checkout -b developer-javier/<br>
+        git push -u origin developer-javier/<br><br>
+        <span style="color:var(--text3)"># Jose hace lo mismo</span><br>
+        git checkout -b developer-jose/<br>
+        git push -u origin developer-jose/
+      </div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+      <div style="font-weight:600;margin-bottom:10px">📅 Rutina diaria de cada desarrollador</div>
+      <div style="font-family:monospace;font-size:12px;background:var(--bg);border-radius:6px;padding:12px;line-height:2;overflow-x:auto">
+        <span style="color:var(--text3)"># Al comenzar el día — traer cambios de main</span><br>
+        git checkout developer-javier/<br>
+        git pull origin main<br><br>
+        <span style="color:var(--text3)"># Trabajar, luego commitear frecuentemente</span><br>
+        git add .<br>
+        git commit -m "feat(ms-auth): agregar endpoint POST /auth/login con JWT"<br>
+        git push origin developer-javier/
+      </div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+      <div style="font-weight:600;margin-bottom:10px">🔀 Proceso de Merge al final de cada etapa</div>
+      <div style="font-family:monospace;font-size:12px;background:var(--bg);border-radius:6px;padding:12px;line-height:2;overflow-x:auto">
+        <span style="color:var(--text3)"># 1. Cada uno abre un Pull Request en GitHub</span><br>
+        <span style="color:var(--text3)">#    developer-javier/ → main (Jose revisa)</span><br>
+        <span style="color:var(--text3)">#    developer-jose/ → main (Javier revisa)</span><br><br>
+        <span style="color:var(--text3)"># 2. Después del merge, ambos actualizan su rama</span><br>
+        git checkout developer-javier/<br>
+        git pull origin main<br><br>
+        <span style="color:var(--text3)"># 3. Si hay conflictos, resolverlos y commitear</span><br>
+        git add .<br>
+        git commit -m "fix: resolver conflicto en application.properties"
+      </div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+      <div style="font-weight:600;margin-bottom:10px">✍️ Convención de commits recomendada</div>
+      <div style="font-family:monospace;font-size:12px;background:var(--bg);border-radius:6px;padding:12px;line-height:2;overflow-x:auto">
+        feat(ms-auth): agregar encriptación BCrypt<br>
+        feat(ms-personajes): WebClient para consultar razas<br>
+        fix(ms-inventario): corregir validación de peso máximo<br>
+        docs(ms-combate): agregar Swagger a endpoints<br>
+        test(ms-misiones): tests unitarios para completar misión<br>
+        chore: actualizar application.properties con nuevo puerto
+      </div>
+    </div>
+
+    <div style="background:var(--merge-light);border:1px solid #D9A520;border-radius:var(--radius);padding:16px">
+      <div style="font-weight:600;margin-bottom:8px;color:var(--merge)">⚠️ Reglas para evitar conflictos</div>
+      <div style="font-size:13px;color:var(--text2);line-height:2">
+        • Cada uno trabaja <strong>solo</strong> en sus microservicios asignados<br>
+        • <strong>Nunca</strong> editar archivos del otro sin coordinarse antes<br>
+        • Si necesitan compartir una clase utilitaria, hablar primero<br>
+        • Hacer <code>git pull origin main</code> al inicio de cada día<br>
+        • Commitear <strong>seguido</strong> — no acumular 3 días de cambios en 1 commit<br>
+        • El <code>application.properties</code> es territorio de <strong>cada uno</strong> — no sobreescribir
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const KEY='rpg_schedule_v2';
+function getS(){try{return JSON.parse(localStorage.getItem(KEY))||{};}catch(e){return{};}}
+function setS(s){try{localStorage.setItem(KEY,JSON.stringify(s));}catch(e){}}
+function toggle(el){el.classList.toggle('done');persist();updateStats();}
+function persist(){const t=document.querySelectorAll('.task-item');const s={};t.forEach((x,i)=>{s[i]=x.classList.contains('done');});setS(s);}
+function restore(){
+  const s=getS();
+  const allTasks=document.querySelectorAll('.task-item');
+  const isEmpty=Object.keys(s).length===0;
+  allTasks.forEach((t,i)=>{
+    if(isEmpty||s[i])t.classList.add('done');
+  });
+  updateStats();
+}
+function resetAll(){document.querySelectorAll('.task-item').forEach(t=>t.classList.remove('done'));setS({});updateStats();}
+function updateStats(){
+  const t=document.querySelectorAll('.task-item');
+  const d=document.querySelectorAll('.task-item.done');
+  const total=t.length,done=d.length;
+  document.getElementById('s-done').textContent=done;
+  document.getElementById('s-total').textContent=total;
+  document.getElementById('s-pct').textContent=Math.round(done/total*100)+'%';
+  document.getElementById('s-merge').textContent='10/10';
+  document.getElementById('pbar').style.width=Math.round(done/total*100)+'%';
+}
+function showTab(id,el){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  el.classList.add('active');
+}
+function copySQL(btn){
+  const codeBlock=btn.parentElement.nextElementSibling;
+  const text=codeBlock.innerText.replace(/^\d+\s/gm,'');
+  navigator.clipboard.writeText(text).then(()=>{
+    const orig=btn.textContent;
+    btn.textContent='✓ Copiado';
+    setTimeout(()=>{btn.textContent=orig;},2000);
+  }).catch(err=>alert('Error al copiar: '+err));
+}
+restore();
+</script>
+</body>
+</html>

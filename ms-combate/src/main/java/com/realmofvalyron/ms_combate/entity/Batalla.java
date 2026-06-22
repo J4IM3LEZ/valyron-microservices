@@ -71,7 +71,7 @@ public class Batalla {
         TROLL,
         DRAGON,
         NAZGUL,
-        ARAÑA,
+        ARANA,
         ESQUELETO,
         JEFE
     }

@@ -179,7 +179,7 @@ public class CombateService {
             case GOBLIN -> 5 + random.nextInt(5);
             case ORCO -> 15 + random.nextInt(10);
             case TROLL -> 25 + random.nextInt(15);
-            case ARAÑA -> 10 + random.nextInt(8);
+            case ARANA -> 10 + random.nextInt(8);
             case ESQUELETO -> 8 + random.nextInt(6);
             case NAZGUL -> 40 + random.nextInt(20);
             case DRAGON -> 60 + random.nextInt(30);

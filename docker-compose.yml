@@ -1,6 +1,21 @@
 version: '3.9'
 
 services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-valyron
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
   eureka-server:
     build: ./eureka-server
     container_name: eureka-server
@@ -25,6 +40,8 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+      mysql:
+        condition: service_healthy
     restart: on-failure
 
   ms-razas:
@@ -39,6 +56,8 @@ services:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
     depends_on:
       eureka-server:
+        condition: service_healthy
+      mysql:
         condition: service_healthy
     restart: on-failure
 
@@ -55,6 +74,8 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+      mysql:
+        condition: service_healthy
     restart: on-failure
 
   ms-objetos:
@@ -69,6 +90,8 @@ services:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
     depends_on:
       eureka-server:
+        condition: service_healthy
+      mysql:
         condition: service_healthy
     restart: on-failure
 
@@ -85,6 +108,8 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+      mysql:
+        condition: service_healthy
     restart: on-failure
 
   ms-poderes:
@@ -99,6 +124,8 @@ services:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
     depends_on:
       eureka-server:
+        condition: service_healthy
+      mysql:
         condition: service_healthy
     restart: on-failure
 
@@ -115,6 +142,8 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+      mysql:
+        condition: service_healthy
     restart: on-failure
 
   ms-combate:
@@ -129,6 +158,8 @@ services:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
     depends_on:
       eureka-server:
+        condition: service_healthy
+      mysql:
         condition: service_healthy
     restart: on-failure
 
@@ -145,6 +176,8 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+      mysql:
+        condition: service_healthy
     restart: on-failure
 
   ms-gremios:
@@ -159,6 +192,8 @@ services:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
     depends_on:
       eureka-server:
+        condition: service_healthy
+      mysql:
         condition: service_healthy
     restart: on-failure
 
@@ -175,4 +210,9 @@ services:
     depends_on:
       eureka-server:
         condition: service_healthy
+      mysql:
+        condition: service_healthy
     restart: on-failure
+
+volumes:
+  mysql_data:
